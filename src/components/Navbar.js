@@ -1,46 +1,42 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { CiShoppingCart } from "react-icons/ci";
-import {ShoppingCartRounded} from "@mui/icons-material"
+import { ShoppingCartRounded } from "@mui/icons-material";
 
 const Navbar = () => {
-    const [nav, setNav] = useState(false);
+  const [nav, setNav] = useState(false);
+  const [scroll, setScroll] = useState(false);
 
   const links = [
-  
-    {
-      id: 1,
-      link: "home",
-    },
-    {
-      id: 2,
-      link: "about",
-    },
-    {
-      id: 3,
-      link: "portfolio",
-    },
-    {
-      id: 4,
-      link: "experience",
-    },
-    {
-      id: 5,
-      link: "contact",
-    },
+    { id: 1, link: "home" },
+    { id: 2, link: "about" },
+    { id: 3, link: "portfolio" },
+    { id: 4, link: "experience" },
+    { id: 5, link: "contact" },
   ];
 
-  const linkcart= [ {
-    id:0,
-    link: "cart",
-  }
-];
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setScroll(true);
+      } else {
+        setScroll(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
-    <div className="flex justify-between items-center w-full h-20 px-4 text-black bg-white fixed nav">
+    <div
+      className={`flex justify-between items-center w-full h-20 px-4 text-black bg-white fixed top-0 z-50 transition-all duration-300 ${
+        scroll ? "shadow-lg bg-opacity-90" : "bg-opacity-100"
+      }`}
+    >
       <div>
-        {/* <h1 className="text-5xl font-signature ml-2"><a className="link-underline hover:transition ease-in-out delay-150 hover:underline hover:decoration-solid" href="">Logo</a></h1> */}
         <h1 className="text-5xl font-signature ml-2">
           <a
             className="link-underline link-underline-black"
@@ -50,14 +46,9 @@ const Navbar = () => {
           >
             Logo
           </a>
-          
         </h1>
       </div>
 
-
-     
-
-      
       <ul className="hidden md:flex">
         {links.map(({ id, link }) => (
           <li
@@ -67,17 +58,15 @@ const Navbar = () => {
             <Link href={link}>{link}</Link>
           </li>
         ))}
-            
-      <li 
-      key={0} 
-      className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline"
-     ><Link href={"/cart"}>{""} <ShoppingCartRounded className="cart"/></Link> </li>
-      
+        <li
+          key={0}
+          className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline"
+        >
+          <Link href={"/cart"}>
+            <ShoppingCartRounded className="cart" />
+          </Link>
+        </li>
       </ul>
-
-   
-
-      
 
       <div
         onClick={() => setNav(!nav)}
@@ -102,8 +91,6 @@ const Navbar = () => {
       )}
     </div>
   );
-  
 };
-
 
 export default Navbar;
