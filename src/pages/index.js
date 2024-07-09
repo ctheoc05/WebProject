@@ -22,15 +22,17 @@
 //    }
 
 // pages/index.js
-import Layout from '../components/layout.js';
 
-const Home = () => {
+import Head from "next/head"
+// import Layout from '../components/layout.js';
+import Navbar from "../components/Navbar.js"
+import "../app/globals.css";
+
+export default function Home() {
   return (
-    <Layout>
-      <h1>Home Page</h1>
-      <p>Welcome to our Next.js application.</p>
-    </Layout>
-  );
-};
-
-export default Home;
+    <>  
+    <Navbar/>
+    </>
+     
+  )
+}
