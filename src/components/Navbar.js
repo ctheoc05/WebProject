@@ -1,11 +1,14 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { CiShoppingCart } from "react-icons/ci";
+import {ShoppingCartRounded} from "@mui/icons-material"
 
 const Navbar = () => {
     const [nav, setNav] = useState(false);
 
   const links = [
+  
     {
       id: 1,
       link: "home",
@@ -28,8 +31,14 @@ const Navbar = () => {
     },
   ];
 
+  const linkcart= [ {
+    id:0,
+    link: "cart",
+  }
+];
+
   return (
-    <div className="flex justify-between items-center w-full h-20 px-4 text-white bg-black fixed nav">
+    <div className="flex justify-between items-center w-full h-20 px-4 text-black bg-white fixed nav">
       <div>
         {/* <h1 className="text-5xl font-signature ml-2"><a className="link-underline hover:transition ease-in-out delay-150 hover:underline hover:decoration-solid" href="">Logo</a></h1> */}
         <h1 className="text-5xl font-signature ml-2">
@@ -41,19 +50,34 @@ const Navbar = () => {
           >
             Logo
           </a>
+          
         </h1>
       </div>
 
+
+     
+
+      
       <ul className="hidden md:flex">
         {links.map(({ id, link }) => (
           <li
             key={id}
-            className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-white duration-200 link-underline"
+            className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline"
           >
             <Link href={link}>{link}</Link>
           </li>
         ))}
+            
+      <li 
+      key={0} 
+      className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline"
+     ><Link href={"/cart"}>{""} <ShoppingCartRounded className="cart"/></Link> </li>
+      
       </ul>
+
+   
+
+      
 
       <div
         onClick={() => setNav(!nav)}
