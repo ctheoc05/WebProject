@@ -1,13 +1,20 @@
-// pages/about.js
-import Layout from '../components/layout.js';
+import PageContainer from '../components/PageContainer'
+import Main from "../components/Main";
+import Title from "../components/Title";
+import Description from "../components/Description";
 
-const About = () => {
+export default  function About() {
   return (
-    <Layout>
-      <h1>About Us</h1>
-      <p>Welcome to the about page of our Next.js application.</p>
-    </Layout>
-  );
-};
-
-export default About;
+    <PageContainer>
+      <Main>
+        <Title>
+          About us:
+        </Title>
+        <Description>
+          some info about us..
+        </Description>
+        Contact us: 99344588
+      </Main>
+    </PageContainer>
+  )
+}

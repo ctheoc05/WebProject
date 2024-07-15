@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { CiShoppingCart } from "react-icons/ci";
 import {ShoppingCartRounded} from "@mui/icons-material"
+import Image from 'next/image'
 
 const Navbar = () => {
     const [nav, setNav] = useState(false);
@@ -19,15 +20,15 @@ const Navbar = () => {
     },
     {
       id: 3,
-      link: "portfolio",
+      link: "contact",
     },
     {
       id: 4,
-      link: "experience",
+      link: "signup",
     },
     {
       id: 5,
-      link: "contact",
+      link: "login",
     },
   ];
 
@@ -42,14 +43,11 @@ const Navbar = () => {
       <div>
         {/* <h1 className="text-5xl font-signature ml-2"><a className="link-underline hover:transition ease-in-out delay-150 hover:underline hover:decoration-solid" href="">Logo</a></h1> */}
         <h1 className="text-5xl font-signature ml-2">
-          <a
-            className="link-underline link-underline-black"
-            href=""
-            target="_blank"
-            rel="noreferrer"
-          >
-            Logo
-          </a>
+        <Link href="/">
+          
+            <Image src="/654073.png" alt="Logo" width={50} height={50} />
+          
+        </Link>
           
         </h1>
       </div>
