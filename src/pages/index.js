@@ -1,8 +1,9 @@
-// pages/index.js
 import Head from "next/head";
-import Navbar from "../components/Navbar.js";
+import Navbar from "../components/Navbar";
 import "../app/globals.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Login from "../components/login";
+import { Typography } from '@mui/material';
 
 export const getServerSideProps = async () => {
   const res = await fetch('http://localhost:3000/api/products');
@@ -13,29 +14,33 @@ export const getServerSideProps = async () => {
 };
 
 export default function Home({ ProductsAnthia }) {
-// const [products, setProducts] = useState(null);
-
-//   useEffect(async () => {
-//     const res = await fetch('http://localhost:3000/api/products');
-//     const products = await res.json();
-//     setProducts(products);
-//   }, []);
-
-//   console.log('products ', products)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <>
+      <Head>
+        <title>Home</title>
+      </Head>
       <Navbar />
-      <div>
-        {ProductsAnthia.map((p) => {
-          return (
-            <div key={p.ProductID}>
-              <p>
-                {p.Name} - {p.RetailPrice}
-              </p>
+      <div className="main-content">
+        {!isLoggedIn ? (
+          <Login setIsLoggedIn={setIsLoggedIn} />
+        ) : (
+          <div style={{ padding: '20px' }}>
+            <Typography component="h1" variant="h5" style={{ marginBottom: '20px' }}>
+              Products
+            </Typography>
+            <div>
+              {ProductsAnthia.map((p) => (
+                <div key={p.ProductID} style={{ marginBottom: '10px' }}>
+                  <p>
+                    {p.Name} - {p.RetailPrice}
+                  </p>
+                </div>
+              ))}
             </div>
-          );
-        })}
+          </div>
+        )}
       </div>
     </>
   );
