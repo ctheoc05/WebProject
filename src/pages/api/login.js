@@ -83,17 +83,17 @@ export default async function handle(req, res) {
       console.log('User found:', Users);
 
       if (!Users) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ message: 'Invalid email' });
       }
 
       // Compare passwords using bcrypt
-      const isPasswordValid = await bcrypt.compare(password, User.Password);
+      const isPasswordValid = password === Users.Password;
 
       // Log password validation result
       console.log('Is password valid:', isPasswordValid);
 
       if (!isPasswordValid) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ message: 'Invalid password' });
       }
 
       // If login is successful
