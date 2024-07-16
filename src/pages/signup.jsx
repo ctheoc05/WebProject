@@ -1,19 +1,18 @@
-// // pages/index.js
-// import Head from "next/head";
-// import './signup.css';
-// import Navbar from "../components/Navbar.js";
-// import "../app/globals.css";
-// import { useEffect, useState } from "react";
-// import { PrismaClient } from '@prisma/client';
+// pages/index.js
+import Head from "next/head";
+import './signup.css';
+import Navbar from "../components/Navbar.js";
+import "../app/globals.css";
+import { useEffect, useState } from "react";
+import { PrismaClient } from '@prisma/client';
 
-// export const getServerSideProps = async () => {
-//   const res = await fetch('http://localhost:3000/api/users');
-//   const Users = await res.json();
-//   return {
-//     props: { Users: Array.isArray(Users) ? Users : [] },
-//   };
-// };
-
+export const getServerSideProps = async () => {
+  const res = await fetch('http://localhost:3000/api/users');
+  const Users = await res.json();
+  return {
+    props: { Users: Array.isArray(Users) ? Users : [] },
+  };
+};
 
 // export default function Home({ Users }) {
 // const [products, setProducts] = useState(null);
@@ -49,7 +48,6 @@
 // import { PrismaClient } from '@prisma/client';
 
 
-
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -58,12 +56,13 @@ const SignUpPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [gender, setGender] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     // Check if all fields are filled
-    if (!firstName || !lastName || !email || !username || !password) {
+    if (!firstName || !lastName || !email || !username || !password || !gender) {
       setError('Please fill in all fields to sign up!');
       return;
     }
@@ -78,15 +77,16 @@ const SignUpPage = () => {
       // Create a new user account using Prisma
       const user = await prisma.Users.create({
         data: {
-          firstName:"edsk",
-          lastName:"odkspod",
-          email:"stylasdi@hotmail.com",
-          username:"sfspokc",
-          password:"sfkpseofwe240"
+          FirstName: firstName,
+          LastName: lastName,
+          Email: email,
+          Username: username,
+          Password: password,
+          Gender: gender,
+          AgreeToTerms: agreeToTerms
         },
       });
 
-      
       // Simulate a successful sign-up response
       const response = { success: true, message: 'Account created successfully!' };
       if (response.success) {
@@ -102,9 +102,7 @@ const SignUpPage = () => {
   };
 
   return (
-    
     <div className="container">
-      
       <form onSubmit={handleSubmit}>
         <h1>Sign Up</h1>
         <label>
@@ -130,6 +128,16 @@ const SignUpPage = () => {
         <label>
           Password:
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </label>
+        <br />
+        <label>
+          Gender:
+          <select value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="">Select</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
+          </select>
         </label>
         <br />
         <label>
