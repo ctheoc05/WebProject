@@ -1,8 +1,9 @@
+// pages/index.js
 import Head from "next/head";
 import Navbar from "../components/Navbar";
 import "../app/globals.css";
 import { useState } from "react";
-import Login from "../components/login";
+import Login from "../components/login"; 
 import { Typography } from '@mui/material';
 
 export const getServerSideProps = async () => {

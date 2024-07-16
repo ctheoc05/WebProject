@@ -58,9 +58,6 @@ model sysdiagrams {
 }
 
 model Users {
-  Firstname String @db.VarChar(25)
-  LastName  String @db.VarChar(25)
-  Email     String @db.VarChar(50)
-  Username  String @id(map: "PK_Username") @db.VarChar(20)
-  Password  String @db.VarChar(25)
+  Email    String  @id(map: "PK_Users") @db.VarChar(25)
+  Password String? @db.NVarChar(25)
 }

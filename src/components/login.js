@@ -1,17 +1,24 @@
-// components/Login.js
-
+// components/login.js
 import React, { useState } from 'react';
+import axios from 'axios';
 import { TextField, Button, Container, Typography, Box } from '@mui/material';
 
 const Login = ({ setIsLoggedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add authentication logic here
-    console.log('Email:', email, 'Password:', password);
-    setIsLoggedIn(true); // Set the login state to true upon successful login
+    try {
+      const response = await axios.post('src/pages/api/login.js', { email, password });
+
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+        console.log('Login successful');
+      }
+    } catch (error) {
+      console.error('Error during login:', error.response?.data?.message || error.message);
+    }
   };
 
   return (

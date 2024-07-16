@@ -1,18 +1,18 @@
-// pages/index.js
-import Head from "next/head";
-import './signup.css';
-import Navbar from "../components/Navbar.js";
-import "../app/globals.css";
-import { useEffect, useState } from "react";
-import { PrismaClient } from '@prisma/client';
+// // pages/index.js
+// import Head from "next/head";
+// import './signup.css';
+// import Navbar from "../components/Navbar.js";
+// import "../app/globals.css";
+// import { useEffect, useState } from "react";
+// import { PrismaClient } from '@prisma/client';
 
-export const getServerSideProps = async () => {
-  const res = await fetch('http://localhost:3000/api/users');
-  const Users = await res.json();
-  return {
-    props: { Users: Array.isArray(Users) ? Users : [] },
-  };
-};
+// export const getServerSideProps = async () => {
+//   const res = await fetch('http://localhost:3000/api/users');
+//   const Users = await res.json();
+//   return {
+//     props: { Users: Array.isArray(Users) ? Users : [] },
+//   };
+// };
 
 
 // export default function Home({ Users }) {
