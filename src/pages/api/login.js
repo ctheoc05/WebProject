@@ -1,7 +1,5 @@
 // src/pages/api/login.js
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-
 const prisma = new PrismaClient();
 
 export default async function handle(req, res) {
@@ -25,6 +23,7 @@ export default async function handle(req, res) {
                 border-radius: 5px;
                 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
                 width: 300px;
+                text-align: center;
               }
               input[type="text"], input[type="password"] {
                 width: 100%;
@@ -46,14 +45,49 @@ export default async function handle(req, res) {
               button:hover {
                 background-color: #45a049;
               }
+              .message {
+                margin-top: 10px;
+                font-size: 14px;
+                color: red;
+              }
             </style>
           </head>
           <body>
-            <form method="POST" action="/api/login">
+            <form method="POST" action="/api/login" onsubmit="handleSubmit(event)">
               <input type="text" name="email" placeholder="Email" required>
               <input type="password" name="password" placeholder="Password" required>
               <button type="submit">Login</button>
+              <div class="message" id="message"></div>
             </form>
+            <script>
+              async function handleSubmit(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                const response = await fetch('/api/login', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                const messageDiv = document.getElementById('message');
+
+               if (response.ok) {
+                  messageDiv.style.color = 'green';
+                  localStorage.setItem('username', result.username);
+                  window.location.href = 'http://localhost:3000';
+                } else {
+                  messageDiv.style.color = 'red';
+                }
+
+                messageDiv.textContent = result.message;
+              }
+            </script>
           </body>
         </html>
       `;
@@ -96,9 +130,9 @@ export default async function handle(req, res) {
         return res.status(401).json({ message: 'Invalid password' });
       }
 
-      // If login is successful
-      return res.status(200).json({ message: 'Login successful' });
-    }
+       // If login is successful
+       return res.status(200).json({ message: 'Login successful', username: Users.Username });
+      }
 
     // Handle other methods
     res.setHeader('Allow', ['GET', 'POST']);
