@@ -1,7 +1,6 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { CiShoppingCart } from "react-icons/ci";
 import { ShoppingCartRounded } from "@mui/icons-material";
 
 const Navbar = () => {

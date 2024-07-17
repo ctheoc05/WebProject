@@ -1,6 +1,6 @@
 // pages/index.js
 import Head from "next/head";
-import Navbar from "../components/Navbar";
+import Navbar from "./components/Navbar";
 import "../app/globals.css";
 import { useState } from "react";
 
