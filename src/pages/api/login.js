@@ -2,6 +2,7 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+
 export default async function handle(req, res) {
   try {
     if (req.method === 'GET') {
@@ -143,4 +144,5 @@ export default async function handle(req, res) {
   } finally {
     await prisma.$disconnect();
   }
+
 }

@@ -1,11 +1,14 @@
 import React from 'react';
 import Image from 'next/image';
 import styles from './about.module.css';
+import Navbar from "../components/Navbar";
+
 
 const About = () => {
   return (
     <div className={styles.container}>
       <Image
+
         src="/lalala.png"
         alt="Flower Shop Logo"
         width={150}
@@ -33,12 +36,12 @@ const About = () => {
         look forward to helping you express your emotions through the language
         of flowers.
       </p>
+      <Navbar />
     </div>
+      
+
   );
 };
-
-
-
 
 export default About;
 

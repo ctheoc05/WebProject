@@ -60,10 +60,10 @@ model sysdiagrams {
 model Users {
   UserID       Int      @default(autoincrement())
   Email        String   @id(map: "PK_Users") @db.VarChar(50)
-  FirstName    String?  @db.VarChar(25)
-  LastName     String?  @db.VarChar(25)
+  FirstName    String?  @db.VarChar(50)
+  LastName     String?  @db.VarChar(50)
   Gender       String?  @db.VarChar(3)
-  Username     String?  @db.VarChar(25)
-  Password     String?  @db.NVarChar(25)
+  Username     String?  @db.VarChar(30)
+  Password     String?  @db.NVarChar(30)
   AgreeToTerms Boolean?
 }

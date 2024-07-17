@@ -114,10 +114,28 @@ export default async function handle(req, res) {
             <div class="error" id="error"></div>
           </div>
           <script>
+            function validatePassword(password) {
+              const passwordLength = password.length >= 8 && password.length <= 30;
+              const containsNumber = /[0-9]/.test(password);
+              const containsLowerCase = /[a-z]/.test(password);
+              const containsUpperCase = /[A-Z]/.test(password);
+              const containsSpecialChar = /[!@#$%^&*()\\-_=+.,;:"'~]/.test(password);
+
+              return passwordLength && containsNumber && containsLowerCase && containsUpperCase && containsSpecialChar;
+            }
+
             document.querySelector('form').addEventListener('submit', async function (event) {
               event.preventDefault();
               const formData = new FormData(event.target);
               const data = Object.fromEntries(formData.entries());
+
+              const errorElement = document.getElementById('error');
+              errorElement.textContent = '';
+
+              if (!validatePassword(data.password)) {
+                errorElement.textContent = 'Password must be 8-30 characters long and include at least one number, one lowercase letter, one uppercase letter, and one special character.';
+                return;
+              }
 
               const response = await fetch('/api/signup', {
                 method: 'POST',
@@ -131,14 +149,13 @@ export default async function handle(req, res) {
               if (response.ok) {
                 window.location.href = '/api/login';
               } else {
-                document.getElementById('error').textContent = result.message;
+                errorElement.textContent = result.message;
               }
             });
           </script>
         </body>
       </html>
     `;
-
     res.setHeader('Content-Type', 'text/html');
     return res.status(200).send(html);
   }
@@ -148,6 +165,21 @@ export default async function handle(req, res) {
 
     if (!firstName || !lastName || !email || !username || !password || !gender || !agreeToTerms) {
       return res.status(400).json({ message: 'Please fill in all fields and agree to the Terms and Conditions!' });
+    }
+
+    // Server-side password validation
+    const validatePassword = (password) => {
+      const passwordLength = password.length >= 8 && password.length <= 30;
+      const containsNumber = /[0-9]/.test(password);
+      const containsLowerCase = /[a-z]/.test(password);
+      const containsUpperCase = /[A-Z]/.test(password);
+      const containsSpecialChar = /[!@#$%^&*()\\-_=+.,;:"'~]/.test(password);
+
+      return passwordLength && containsNumber && containsLowerCase && containsUpperCase && containsSpecialChar;
+    };
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ message: 'Password must be 8-30 characters long and include at least one number, one lowercase letter, one uppercase letter, and one special character.' });
     }
 
     try {
