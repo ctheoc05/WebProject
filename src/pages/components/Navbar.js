@@ -10,33 +10,27 @@ const Navbar = () => {
   const links = [
     {
       id: 1,
-      link: "Home",
+      link: "home",
       href: "/",
     },
     {
       id: 2,
-      link: "About",
-      href: "/about",
+      link: "about",
     },
     {
       id: 3,
       link: "Contact",
-      href: "/contact",
     },
     {
       id: 4,
       link: "Account",
-      href: "/account",
+      href: "/api/signup", // Updated to point to the signup page
     },
   ];
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setScroll(true);
-      } else {
-        setScroll(false);
-      }
+      setScroll(window.scrollY > 0);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -70,13 +64,10 @@ const Navbar = () => {
             key={id}
             className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline"
           >
-            <Link href={href || `/${link}`}>{link}</Link>
+            <Link href={href || `${link}`}>{link}</Link>
           </li>
         ))}
-        <li
-          key={0}
-          className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline"
-        >
+        <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline">
           <Link href="/cart">
             <ShoppingCartRounded className="cart" />
           </Link>
@@ -97,7 +88,7 @@ const Navbar = () => {
               key={id}
               className="px-4 cursor-pointer capitalize py-6 text-4xl"
             >
-              <Link onClick={() => setNav(!nav)} href={href || `/${link}`}>
+              <Link onClick={() => setNav(!nav)} href={href || `${link}`}>
                 {link}
               </Link>
             </li>
