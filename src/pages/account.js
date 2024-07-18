@@ -44,52 +44,52 @@ export default function Account() {
   };
 
   return (
-    <>
-    <Navbar/>
-    <div className="container">
-      <form onSubmit={handleSubmit}>
-        <h1>Sign Up</h1>
-        <label>
-          First Name:
-          <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
-        </label>
-        <label>
-          Last Name:
-          <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required />
-        </label>
-        <label>
-          Email:
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-        </label>
-        <label>
-          Username:
-          <input type="text" name="username" value={formData.username} onChange={handleChange} required />
-        </label>
-        <label>
-          Password:
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-        </label>
-        <label>
-          Gender:
-          <select name="gender" value={formData.gender} onChange={handleChange} required>
-            <option value="">Select</option>
-            <option value="Female">Female</option>
-            <option value="Male">Male</option>
-            <option value="Other">Other</option>
-          </select>
-        </label>
-        <label>
-          <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-          I agree to the Terms and Conditions
-        </label>
-        <button type="submit">Sign Up</button>
-        {error && <div className="error">{error}</div>}
-      </form>
+    <div>
+      <Navbar />
+      <div className="form-container">
+        <form onSubmit={handleSubmit}>
+          <h1 className= "form-heading">Sign up</h1>
+          <label>
+            First Name:
+            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
+          </label>
+          <label>
+            Last Name:
+            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required />
+          </label>
+          <label>
+            Email:
+            <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+          </label>
+          <label>
+            Username:
+            <input type="text" name="username" value={formData.username} onChange={handleChange} required />
+          </label>
+          <label>
+            Password:
+            <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+          </label>
+          <label>
+            Gender:
+            <select name="gender" value={formData.gender} onChange={handleChange} required>
+              <option value="">Select</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label>
+            <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
+            I agree to the Terms and Conditions
+          </label>
+          <button type="submit">Sign Up</button>
+          {error && <div className="error">{error}</div>}
+        </form>
       </div>
       <style jsx>{`
-        .container {
+        .form-container {
           max-width: 500px;
-          margin: 0 auto;
+          margin: 80px auto 20px; 
           padding: 20px;
           background-color: #f7f7f7;
           border-radius: 8px;
@@ -99,10 +99,13 @@ export default function Account() {
           display: flex;
           flex-direction: column;
         }
-        h1 {
-          text-align: center;
-          color: #333;
-        }
+       .form-heading{
+       text-align:center;
+       font-size:2.5rem;
+       font-weight:600;
+       color:#333;
+       margin-bottom:20px
+       }
         label {
           margin-bottom: 10px;
           color: #555;
@@ -139,6 +142,6 @@ export default function Account() {
           text-align: center;
         }
       `}</style>
-    </>
+    </div>
   );
 }
