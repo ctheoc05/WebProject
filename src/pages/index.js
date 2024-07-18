@@ -6,9 +6,9 @@ import { useState } from "react";
 
 export const getServerSideProps = async () => {
   const res = await fetch('http://localhost:3000/api/products');
-  const ProductsAnthia = await res.json();
+  const Products = await res.json();
   return {
-    props: { ProductsAnthia: Array.isArray(ProductsAnthia) ? ProductsAnthia : [] },
+    props: { Products: Array.isArray(Products) ? Products : [] },
   };
 };
 
