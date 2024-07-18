@@ -1,5 +1,7 @@
 // pages/api/signup.js
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+const saltRounds=10;
 
 const prisma = new PrismaClient();
 
@@ -183,14 +185,16 @@ export default async function handle(req, res) {
     }
 
     try {
-      const user = await prisma.users.create({
+
+      const hashedPassword= await bcrypt.hash(password,saltRounds)
+      const user = await prisma.Users.create({
         data: {
           FirstName: firstName,
           LastName: lastName,
           Email: email.toLowerCase(),
           Username: username,
-          Password: password,
-          Gender: gender,
+          Password: hashedPassword,
+          Gender: gender === 'Female'? 'F' : gender === 'Male'? 'M' : 'O', // Save M, F, or O in the database
           AgreeToTerms: agreeToTerms === 'on'
         },
       });

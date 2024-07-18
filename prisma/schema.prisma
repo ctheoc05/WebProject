@@ -59,11 +59,12 @@ model sysdiagrams {
 
 model Users {
   UserID       Int      @default(autoincrement())
+  Salt         String?  @db.VarChar(255)
   Email        String   @id(map: "PK_Users") @db.VarChar(50)
   FirstName    String?  @db.VarChar(50)
   LastName     String?  @db.VarChar(50)
   Gender       String?  @db.VarChar(3)
   Username     String?  @db.VarChar(30)
-  Password     String?  @db.NVarChar(30)
+  Password     String?  @db.NVarChar(255)
   AgreeToTerms Boolean?
 }

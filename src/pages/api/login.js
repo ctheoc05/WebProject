@@ -1,5 +1,6 @@
 // src/pages/api/login.js
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient();
 
 
@@ -117,13 +118,18 @@ export default async function handle(req, res) {
       // Log user information
       console.log('User found:', Users);
 
+
+      console.log('aaaaaa:',password,Users.Password);
+
+
       if (!Users) {
         return res.status(401).json({ message: 'Invalid email' });
       }
-
+   
       // Compare passwords using bcrypt
-      const isPasswordValid = password === Users.Password;
+      const isPasswordValid = await bcrypt.compare(password,Users.Password)
 
+   
       // Log password validation result
       console.log('Is password valid:', isPasswordValid);
 
