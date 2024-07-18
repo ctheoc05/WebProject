@@ -1,27 +1,40 @@
-// pages/index.js
-import Head from "next/head";
+import { useEffect, useState } from 'react';
 import Navbar from "./components/Navbar";
-import "../app/globals.css";
-import { useState } from "react";
 
-export const getServerSideProps = async () => {
-  const res = await fetch('http://localhost:3000/api/products');
-  const Products = await res.json();
-  return {
-    props: { Products: Array.isArray(Products) ? Products : [] },
-  };
-};
+export default function Home() {
+  const [products, setProducts] = useState([]);
 
-export default function Home({ ProductsAnthia }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    async function fetchProducts() {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      setProducts(data);
+    }
+    fetchProducts();
+  }, []);
+ 
 
   return (
-    <>
-      <Head>
-        <title>Home</title>
-      </Head>
+    <div>
+         
       <Navbar />
+      <h1 className="text-exl font-bold underline">
+        Hello
+      </h1>
+      <div className="product-list">
+        {products.map(product => (
+          <div key={product.ProductID} className="product-card">
+            <h2>{product.Name}</h2>
+            <p>Category: {product.Category}</p>
+            <p>Price: ${product.RetailPrice}</p>
+            <p>In Stock: {product.QtyInStock}</p>
+          </div>
+        ))}
+      </div>
+    </div>
     
-    </>
+
   );
+  
+
 }
