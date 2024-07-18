@@ -2,6 +2,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { ShoppingCartRounded } from "@mui/icons-material";
+import "../../app/globals.css";
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
