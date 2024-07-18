@@ -50,6 +50,7 @@ body {
 
 /* Example styles for the navigation links */
 .nav-links {
+  transition: transform 0.2s, color 0.2s;
   display: inline-block;
   padding: 0 15px;
   line-height: 80px; /* Adjust this value to vertically center the links in the navbar */
@@ -58,8 +59,28 @@ body {
 .link-underline {
   text-decoration: none;
   color: gray;
+  position: relative;
 }
 
-.link-underline:hover {
+
+.nav-links:hover {
+  transform: scale(1.05);
   color: black;
+}
+
+.link-underline:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: black;
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+.link-underline:hover:after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
