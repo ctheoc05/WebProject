@@ -7,24 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model CustomersAnthia {
-  CostumerID Int      @id(map: "PK_CustomersAnthia") @default(autoincrement())
-  FirstName  String   @db.NVarChar(50)
-  LastName   String   @db.NVarChar(50)
-  Address    String?  @db.NVarChar(150)
-  City       String?  @db.NVarChar(50)
-  State      String?  @db.NVarChar(50)
-  Orders     Orders[]
-}
-
 model Orders {
-  OrderID         Int             @id(map: "PK_Orders") @default(autoincrement())
-  OrderDate       DateTime        @db.Date
+  OrderID         Int       @id(map: "PK_Orders") @default(autoincrement())
+  OrderDate       DateTime  @db.Date
   CustomerID      Int
-  ProductID       String          @db.NVarChar(50)
+  ProductID       String    @db.NVarChar(50)
   Quantity        Int
-  CustomersAnthia CustomersAnthia @relation(fields: [CustomerID], references: [CostumerID], onUpdate: NoAction, map: "FK_Orders_CustomersAnthia")
-  ProductsAnthia  ProductsAnthia  @relation(fields: [ProductID], references: [ProductID], onUpdate: NoAction, map: "FK_Orders_ProductsAnthia")
+  CustomersAnthia Customers @relation(fields: [CustomerID], references: [CustomerID], onUpdate: NoAction, map: "FK_Orders_CustomersAnthia")
+  ProductsAnthia  Products  @relation(fields: [ProductID], references: [ProductID], onUpdate: NoAction, map: "FK_Orders_ProductsAnthia")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -34,17 +24,6 @@ model ProductCategories {
   CategoryAbbreviation String @db.Char(2)
 
   @@ignore
-}
-
-model ProductsAnthia {
-  Category        String    @default("N'eBooks'", map: "DF_ProductsAnthia_Category") @db.NVarChar(50)
-  ProductID       String    @id(map: "PK_ProductsAnthia") @db.NVarChar(50)
-  Name            String    @unique(map: "UX_Products_Name") @db.NVarChar(50)
-  RetailPrice     Float     @db.Money
-  ManufactureCost Float     @db.Money
-  QtyInStock      Int
-  Timestamp       DateTime? @default(now(), map: "DF_ProductsAnthia_Timestamp")
-  Orders          Orders[]
 }
 
 model sysdiagrams {
@@ -59,7 +38,6 @@ model sysdiagrams {
 
 model Users {
   UserID       Int      @default(autoincrement())
-  Salt         String?  @db.VarChar(255)
   Email        String   @id(map: "PK_Users") @db.VarChar(50)
   FirstName    String?  @db.VarChar(50)
   LastName     String?  @db.VarChar(50)
@@ -67,4 +45,23 @@ model Users {
   Username     String?  @db.VarChar(30)
   Password     String?  @db.NVarChar(255)
   AgreeToTerms Boolean?
+}
+
+model Customers {
+  CustomerID Int      @id(map: "PK_CustomersAnthia") @default(autoincrement())
+  FirstName  String   @db.NVarChar(50)
+  LastName   String   @db.NVarChar(50)
+  Address    String?  @db.NVarChar(150)
+  City       String?  @db.NVarChar(50)
+  State      String?  @db.NVarChar(50)
+  Orders     Orders[]
+}
+
+model Products {
+  Category    String   @default("N'eBooks'", map: "DF_ProductsAnthia_Category") @db.NVarChar(50)
+  ProductID   String   @id(map: "PK_ProductsAnthia") @db.NVarChar(50)
+  Name        String   @unique(map: "UX_Products_Name") @db.NVarChar(50)
+  RetailPrice Float    @db.Money
+  QtyInStock  Int
+  Orders      Orders[]
 }
