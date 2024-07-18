@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 pt-28"> {/* Adjusted padding-top */}
         <h1 className="text-3xl font-bold underline mb-8">
           Products
         </h1>
@@ -34,7 +34,7 @@ export default function Home() {
             className="block w-1/3 p-2 border border-gray-300 rounded-md"
           >
             <option value="All">All</option>
-            <option value="Electronics">Electronics</option>
+            <option value="Women">Women</option>
             <option value="Men">Men</option>
             <option value="Kids">Kids</option>
           </select>
@@ -49,7 +49,6 @@ export default function Home() {
                 <p className="text-gray-600">Category: {product.Category}</p>
                 <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
                 <p className={`text-${product.QtyInStock > 0 ? 'green' : 'red'}-500`}>
-                
                 </p>
                 <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Add to Cart</button>
               </div>
@@ -60,4 +59,4 @@ export default function Home() {
     </div>
   );
 }
-//  {product.QtyInStock > 0 ? In Stock: ${product.QtyInStock} : 'Out of Stock'}
+//                  {product.QtyInStock > 0 ? In Stock: ${product.QtyInStock} : 'Out of Stock'}
