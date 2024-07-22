@@ -1,4 +1,3 @@
-// pages/account.js
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from './components/Navbar';
@@ -27,12 +26,18 @@ export default function Account() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Convert agreeToTerms to 1 if true, otherwise 0
+    const submissionData = {
+      ...formData,
+      agreeToTerms: formData.agreeToTerms ? 1 : 0,
+    };
+
     const response = await fetch('/api/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(submissionData),
     });
 
     const result = await response.json();

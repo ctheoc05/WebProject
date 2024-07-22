@@ -195,7 +195,7 @@ export default async function handle(req, res) {
           Username: username,
           Password: hashedPassword,
           Gender: gender === 'Female'? 'F' : gender === 'Male'? 'M' : 'O', // Save M, F, or O in the database
-          AgreeToTerms: agreeToTerms === 'on'
+          AgreeToTerms: !!agreeToTerms,
         },
       });
 

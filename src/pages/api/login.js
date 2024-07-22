@@ -1,8 +1,7 @@
-// src/pages/api/login.js
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs'
-const prisma = new PrismaClient();
+import bcrypt from 'bcryptjs';
 
+const prisma = new PrismaClient();
 
 export default async function handle(req, res) {
   try {
@@ -79,9 +78,9 @@ export default async function handle(req, res) {
                 const result = await response.json();
                 const messageDiv = document.getElementById('message');
 
-               if (response.ok) {
+                if (response.ok) {
                   messageDiv.style.color = 'green';
-                  localStorage.setItem('username', result.username);
+                  localStorage.setItem('username', result.username); // Store username in local storage
                   window.location.href = 'http://localhost:3000';
                 } else {
                   messageDiv.style.color = 'red';
@@ -100,55 +99,36 @@ export default async function handle(req, res) {
 
     if (req.method === 'POST') {
       const { email, password } = req.body;
-      
-      // Log received email and password
-      console.log('Received login request:', { email, password });
 
       if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
       }
 
-      // Find user in the database
-      const Users = await prisma.Users.findUnique({
+      const user = await prisma.Users.findUnique({
         where: {
           Email: email.toLowerCase(),
         },
       });
 
-      // Log user information
-      console.log('User found:', Users);
-
-
-      console.log('aaaaaa:',password,Users.Password);
-
-
-      if (!Users) {
+      if (!user) {
         return res.status(401).json({ message: 'Invalid email' });
       }
-   
-      // Compare passwords using bcrypt
-      const isPasswordValid = await bcrypt.compare(password,Users.Password)
 
-   
-      // Log password validation result
-      console.log('Is password valid:', isPasswordValid);
+      const isPasswordValid = await bcrypt.compare(password, user.Password);
 
       if (!isPasswordValid) {
         return res.status(401).json({ message: 'Invalid password' });
       }
 
-       // If login is successful
-       return res.status(200).json({ message: 'Login successful', username: Users.Username });
-      }
+      return res.status(200).json({ message: 'Login successful', username: user.Username });
+    }
 
-    // Handle other methods
     res.setHeader('Allow', ['GET', 'POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).end(`Method ${req.method} Not Allowed`); 
   } catch (error) {
     console.error('Error during login:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });
   } finally {
     await prisma.$disconnect();
   }
-
 }
