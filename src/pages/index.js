@@ -19,6 +19,28 @@ export default function Home() {
     if (storedUsername) {
       setUsername(storedUsername);
     }
+
+    // Update cart count when the page is loaded
+    const updateCartCount = () => {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        const cart = JSON.parse(storedCart);
+        const count = cart.reduce((total, product) => total + (product.quantity || 1), 0);
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'cart',
+          newValue: JSON.stringify(cart),
+        }));
+      }
+    };
+
+    updateCartCount();
+
+    // Listen for storage changes to update cart count
+    window.addEventListener('storage', updateCartCount);
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+    };
   }, []);
 
   const filteredProducts = category === 'All' ? products : products.filter(product => product.Category === category);
@@ -36,6 +58,10 @@ export default function Home() {
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Trigger a storage event to update cart count in Navbar
+    const event = new Event('storage');
+    window.dispatchEvent(event);
   };
 
   return (
@@ -93,3 +119,4 @@ export default function Home() {
     </div>
   );
 }
+

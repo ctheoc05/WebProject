@@ -56,7 +56,7 @@ const AccountLogin = () => {
           <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
             Login
           </button>
-          {message && <div className="mt-4 text-red-500">{message}</div>}
+          {message && <div className="mt-4 text-green-500">{message}</div>}
         </form>
       </div>
     </div>

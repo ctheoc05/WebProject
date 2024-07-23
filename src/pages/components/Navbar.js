@@ -6,7 +6,7 @@ const Navbar = () => {
   const [nav, setNav] = useState(false);
   const [scroll, setScroll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [cart, setCart] = useState([]);
+  const [cartCount, setCartCount] = useState(0);
 
   const links = [
     { id: 1, link: 'Home', href: '/' },
@@ -20,7 +20,20 @@ const Navbar = () => {
       setScroll(window.scrollY > 0);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    const updateCartCount = () => {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        const cart = JSON.parse(storedCart);
+        const count = cart.reduce((total, product) => total + (product.quantity || 1), 0);
+        setCartCount(count);
+      }
+    };
+
+    // Initial cart count update
+    updateCartCount();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateCartCount);
 
     // Check if the user is logged in
     if (typeof window !== 'undefined') {
@@ -28,23 +41,19 @@ const Navbar = () => {
       if (username) {
         setIsLoggedIn(true);
       }
-
-      const storedCart = localStorage.getItem('cart');
-      if (storedCart) {
-        setCart(JSON.parse(storedCart));
-      }
     }
+
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', updateCartCount);
     };
   }, []);
 
   const redirectToLogout = () => {
     window.location.href = '/api/logout';
   };
-
-  const totalItems = cart.reduce((total, product) => total + product.quantity, 0);
 
   return (
     <div className={`flex justify-between items-center w-full h-20 px-4 text-black bg-white fixed top-0 z-50 transition-all duration-300 ${scroll ? 'shadow-lg bg-opacity-90' : 'bg-opacity-100'}`}>
@@ -73,7 +82,7 @@ const Navbar = () => {
           <Link href="/cart" legacyBehavior>
             <a className="flex items-center">
               <FaShoppingCart size={20} />
-              <span className="ml-2">({totalItems})</span>
+              <span className="ml-2">({cartCount})</span>
             </a>
           </Link>
         </li>
@@ -99,10 +108,9 @@ const Navbar = () => {
           )}
           <li className="px-4 cursor-pointer capitalize py-6 text-2xl">
             <Link href="/cart" legacyBehavior>
-              <a onClick={() => setNav(!nav)}>
+              <a onClick={() => setNav(!nav)} className="flex items-center">
                 <FaShoppingCart size={30} />
-                <span className="ml-2">({totalItems})</span>
-
+                <span className="ml-2">({cartCount})</span>
               </a>
             </Link>
           </li>
