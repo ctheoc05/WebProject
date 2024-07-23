@@ -116,8 +116,10 @@ export default function Account() {
                 <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
                 I agree to the Terms and Conditions
               </label>
-              <button type="submit" className="submit-button">Sign Up</button>
-              <button type="button" className="login-button" onClick={() => router.push('/api/login')}>Login</button>
+              <div className="button-container">
+                <button type="submit" className="submit-button">Sign Up</button>
+                <button type="button" className="login-button" onClick={() => router.push('/api/login')}>Login</button>
+              </div>
               {error && <div className="error">{error}</div>}
             </form>
           </div>
@@ -126,14 +128,14 @@ export default function Account() {
       <style jsx>{`
         .container {
           max-width: 600px;
-          margin: 80px auto;
+          margin: 30px auto;
           padding: 20px;
         }
         .user-info {
           text-align: center;
         }
         .form-container {
-          max-width: 600px;
+          max-width: 1000px;
           margin: 80px auto;
           padding: 20px;
           background-color: #f7f7f7;
@@ -142,14 +144,14 @@ export default function Account() {
         }
         .form-heading {
           text-align: center;
-          font-size: 2.5rem;
+          font-size: 2rem;
           font-weight: bold;
           color: #333;
           margin-bottom: 20px;
         }
         label {
           display: block;
-          margin-bottom: 15px;
+          margin-bottom: 10px;
           color: #555;
           font-size: 1rem;
         }
@@ -158,9 +160,9 @@ export default function Account() {
         input[type="password"],
         select {
           width: 100%;
-          padding: 12px;
+          padding: 10px;
           margin-top: 5px;
-          margin-bottom: 20px;
+          margin-bottom: 15px;
           border: 1px solid #ccc;
           border-radius: 4px;
           font-size: 1rem;
@@ -168,9 +170,13 @@ export default function Account() {
         input[type="checkbox"] {
           margin-right: 10px;
         }
+        .button-container {
+          display: flex;
+          justify-content: space-between;
+        }
         .submit-button,
         .login-button {
-          width: 45%;
+          width: 48%;
           padding: 10px;
           margin-top: 10px;
           border: none;

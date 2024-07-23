@@ -1,4 +1,3 @@
-// pages/api/signup.js
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 const saltRounds=10;
@@ -12,12 +11,17 @@ export default async function handle(req, res) {
         <head>
           <style>
             .container {
-              max-width: 500px;
+              max-width: 400px;
+              width: 90vw;
+              height: 60vh;
               margin: 0 auto;
               padding: 20px;
               background-color: #f7f7f7;
               border-radius: 8px;
               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
             }
             form {
               display: flex;
@@ -44,30 +48,33 @@ export default async function handle(req, res) {
             input[type="checkbox"] {
               margin-right: 10px;
             }
+            .button-container {
+              display: flex;
+              justify-content: center;
+              gap: 10px;
+            }
             button {
-              width: 100%;
               padding: 10px;
-              margin-top: 10px;
               background-color: #4CAF50;
               color: white;
               border: none;
               border-radius: 4px;
               cursor: pointer;
+              flex: 1;
             }
             button:hover {
               background-color: #45a049;
+            }
+            .login-button {
+              background-color: #007bff;
+            }
+            .login-button:hover {
+              background-color: #0056b3;
             }
             .error {
               color: red;
               margin-top: 10px;
               text-align: center;
-            }
-            .login-button {
-              background-color: #007bff;
-              margin-top: 10px;
-            }
-            .login-button:hover {
-              background-color: #0056b3;
             }
           </style>
         </head>
@@ -108,7 +115,7 @@ export default async function handle(req, res) {
                 <input type="checkbox" name="agreeToTerms" required />
                 I agree to the Terms and Conditions
               </label>
-              <div style="display: flex; justify-content: center;">
+              <div class="button-container">
                 <button type="submit">Sign Up</button>
                 <button class="login-button" type="button" onclick="window.location.href='/api/login'">Login</button>
               </div>
@@ -185,7 +192,6 @@ export default async function handle(req, res) {
     }
 
     try {
-
       const hashedPassword= await bcrypt.hash(password,saltRounds)
       const user = await prisma.Users.create({
         data: {

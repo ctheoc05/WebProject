@@ -1,7 +1,6 @@
-// src/pages/components/Navbar.js
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -13,7 +12,6 @@ const Navbar = () => {
     { id: 2, link: 'About', href: '/about' },
     { id: 3, link: 'Contact', href: '/contact' },
     { id: 4, link: 'Account', href: '/account' },
-    
   ];
 
   useEffect(() => {
@@ -45,24 +43,31 @@ const Navbar = () => {
       <div>
         <h1 className="text-5xl font-signature ml-2">
           <Link href="/" legacyBehavior>
-            <a className="link-underline link-underline-black">Logo</a>
+            <a className="link-black">Logo</a>
           </Link>
         </h1>
       </div>
 
-      <ul className="hidden md:flex">
+      <ul className="hidden md:flex items-center">
         {links.map(({ id, link, href }) => (
-          <li key={id} className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline">
+          <li key={id} className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200">
             <Link href={href} legacyBehavior>
               <a>{link}</a>
             </Link>
           </li>
         ))}
         {isLoggedIn && (
-          <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline">
+          <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200">
             <button onClick={redirectToLogout}>Logout</button>
           </li>
         )}
+        <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200">
+          <Link href="/cart" legacyBehavior>
+            <a>
+              <FaShoppingCart size={20} />
+            </a>
+          </Link>
+        </li>
       </ul>
 
       <div onClick={() => setNav(!nav)} className="cursor-pointer pr-4 z-10 md:hidden">
@@ -83,6 +88,13 @@ const Navbar = () => {
               <button onClick={redirectToLogout}>Logout</button>
             </li>
           )}
+          <li className="px-4 cursor-pointer capitalize py-6 text-2xl">
+            <Link href="/cart" legacyBehavior>
+              <a onClick={() => setNav(!nav)}>
+                <FaShoppingCart size={30} />
+              </a>
+            </Link>
+          </li>
         </ul>
       )}
     </div>
