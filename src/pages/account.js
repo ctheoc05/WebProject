@@ -117,8 +117,8 @@ export default function Account() {
                 I agree to the Terms and Conditions
               </label>
               <div className="button-container">
-                <button type="submit" className="submit-button">Sign Up</button>
-                <button type="button" className="login-button" onClick={() => router.push('/api/login')}>Login</button>
+                <button type="submit" className="submit-button"onClick={() => router.push('/accountlogin')}>Signup</button>
+                <button type="button" className="login-button" onClick={() => router.push('/accountlogin')}>Login</button>
               </div>
               {error && <div className="error">{error}</div>}
             </form>

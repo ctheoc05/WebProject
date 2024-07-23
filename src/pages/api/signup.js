@@ -117,7 +117,7 @@ export default async function handle(req, res) {
               </label>
               <div class="button-container">
                 <button type="submit">Sign Up</button>
-                <button class="login-button" type="button" onclick="window.location.href='/api/login'">Login</button>
+                <button class="login-button" type="button" onclick="window.location.href='/accountlogin'">Login</button>
               </div>
             </form>
             <div class="error" id="error"></div>

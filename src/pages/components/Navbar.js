@@ -6,6 +6,7 @@ const Navbar = () => {
   const [nav, setNav] = useState(false);
   const [scroll, setScroll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cart, setCart] = useState([]);
 
   const links = [
     { id: 1, link: 'Home', href: '/' },
@@ -27,6 +28,11 @@ const Navbar = () => {
       if (username) {
         setIsLoggedIn(true);
       }
+
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        setCart(JSON.parse(storedCart));
+      }
     }
 
     return () => {
@@ -38,33 +44,36 @@ const Navbar = () => {
     window.location.href = '/api/logout';
   };
 
+  const totalItems = cart.reduce((total, product) => total + product.quantity, 0);
+
   return (
     <div className={`flex justify-between items-center w-full h-20 px-4 text-black bg-white fixed top-0 z-50 transition-all duration-300 ${scroll ? 'shadow-lg bg-opacity-90' : 'bg-opacity-100'}`}>
       <div>
         <h1 className="text-5xl font-signature ml-2">
           <Link href="/" legacyBehavior>
-            <a className="link-black">Logo</a>
+            <a className="link-underline link-underline-black">Logo</a>
           </Link>
         </h1>
       </div>
 
       <ul className="hidden md:flex items-center">
         {links.map(({ id, link, href }) => (
-          <li key={id} className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200">
+          <li key={id} className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline">
             <Link href={href} legacyBehavior>
               <a>{link}</a>
             </Link>
           </li>
         ))}
         {isLoggedIn && (
-          <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200">
+          <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline">
             <button onClick={redirectToLogout}>Logout</button>
           </li>
         )}
-        <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200">
+        <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline flex items-center">
           <Link href="/cart" legacyBehavior>
-            <a>
+            <a className="flex items-center">
               <FaShoppingCart size={20} />
+              <span className="ml-2">({totalItems})</span>
             </a>
           </Link>
         </li>
@@ -92,6 +101,8 @@ const Navbar = () => {
             <Link href="/cart" legacyBehavior>
               <a onClick={() => setNav(!nav)}>
                 <FaShoppingCart size={30} />
+                <span className="ml-2">({totalItems})</span>
+
               </a>
             </Link>
           </li>
