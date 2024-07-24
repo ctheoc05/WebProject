@@ -8,12 +8,15 @@ datasource db {
 }
 
 model Orders {
-  OrderID        Int       @id(map: "PK__Orders__C3905BAF7CFAF49D") @default(autoincrement())
-  OrderDate      DateTime? @default(now(), map: "DF__Orders__OrderDat__5224328E") @db.DateTime
-  CustomerID     Int?
+  OrderID        Int            @id(map: "PK__Orders__C3905BAF7CFAF49D") @default(autoincrement())
+  OrderDate      DateTime?      @default(now(), map: "DF__Orders__OrderDat__5224328E") @db.DateTime
   ProductID      Int?
   Quantity       Int?
-  ProductsAnthia Products? @relation(fields: [ProductID], references: [ProductID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_ProductsAnthia")
+  Email          String?        @db.VarChar(50)
+  Delivery       Delivery[]
+  OrderProduct   OrderProduct[]
+  ProductsAnthia Products?      @relation(fields: [ProductID], references: [ProductID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_ProductsAnthia")
+  Users          Users?         @relation(fields: [Email], references: [Email], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_Users")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -37,13 +40,14 @@ model sysdiagrams {
 
 model Users {
   UserID       Int      @default(autoincrement())
-  Email        String   @id(map: "PK_Users") @db.VarChar(50) @unique
+  Email        String   @id(map: "PK_Users") @db.VarChar(50)
   FirstName    String?  @db.VarChar(50)
   LastName     String?  @db.VarChar(50)
   Gender       String?  @db.VarChar(3)
-  Username     String?  @db.VarChar(30) @unique
+  Username     String?  @db.VarChar(30)
   Password     String?  @db.NVarChar(255)
   AgreeToTerms Boolean?
+  Orders       Orders[]
 }
 
 model Customers {
@@ -56,10 +60,34 @@ model Customers {
 }
 
 model Products {
-  ProductID   Int      @id(map: "PK__Products__B40CC6ED63D7A053") @default(autoincrement())
-  Category    String   @db.NVarChar(50)
-  Name        String   @db.NVarChar(100)
-  RetailPrice Decimal  @db.Decimal(10, 2)
-  QtyInStock  Int
-  Orders      Orders[]
+  ProductID    Int            @id(map: "PK__Products__B40CC6ED63D7A053") @default(autoincrement())
+  Category     String         @db.NVarChar(50)
+  Name         String         @db.NVarChar(100)
+  RetailPrice  Decimal        @db.Decimal(10, 2)
+  QtyInStock   Int
+  OrderProduct OrderProduct[]
+  Orders       Orders[]
+}
+
+model Delivery {
+  DeliveryID    Int    @id(map: "PK__Delivery__626D8FEE7E3C80DA") @default(autoincrement())
+  OrderID       Int
+  FullName      String @db.NVarChar(255)
+  Street        String @db.NVarChar(255)
+  StreetNumber  String @db.NVarChar(50)
+  City          String @db.NVarChar(255)
+  PostalCode    String @db.NVarChar(50)
+  Country       String @db.NVarChar(255)
+  PaymentMethod String @db.NVarChar(50)
+  Orders        Orders @relation(fields: [OrderID], references: [OrderID], onUpdate: NoAction, map: "FK_Delivery_OrderID")
+}
+
+model OrderProduct {
+  OrderID   Int
+  ProductID Int
+  Quantity  Int
+  Orders    Orders   @relation(fields: [OrderID], references: [OrderID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Order__65370702")
+  Products  Products @relation(fields: [ProductID], references: [ProductID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Produ__662B2B3B")
+
+  @@id([OrderID, ProductID], map: "PK__OrderPro__08D097C17991A3C4")
 }

@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import Navbar from "./components/Navbar";
 import "../app/globals.css";
 
+// Function to get user email from localStorage
+const getUserEmail = () => {
+  return localStorage.getItem('userEmail');
+};
+
 export default function Checkout() {
   const [cart, setCart] = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState({
@@ -14,11 +19,20 @@ export default function Checkout() {
   });
   const [paymentMethod, setPaymentMethod] = useState('creditCard');
   const [error, setError] = useState('');
-  
+  const [email, setEmail] = useState('');
+
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       setCart(JSON.parse(storedCart));
+    }
+
+    // Fetch the logged-in user's email from localStorage
+    const userEmail = getUserEmail();
+    if (userEmail) {
+      setEmail(userEmail);
+    } else {
+      setError('User not logged in');
     }
   }, []);
 
@@ -31,16 +45,40 @@ export default function Checkout() {
     setPaymentMethod(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate form data
     if (Object.values(deliveryAddress).some(field => !field)) {
       setError('Please fill in all delivery address fields.');
       return;
     }
     setError('');
-    // Proceed with form submission or order processing
-    alert('Order placed successfully!');
+
+    const orderDetails = {
+      cart,
+      deliveryAddress,
+      paymentMethod,
+      email,
+    };
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderDetails),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Order placed successfully!');
+        localStorage.removeItem('cart');
+      } else {
+        alert('Error: ${result.error}');
+      }
+    } catch (error) {
+      console.error('Error placing order:', error);
+    }
   };
 
   const totalAmount = cart.reduce((total, product) => total + (product.RetailPrice * product.quantity), 0);
@@ -172,17 +210,11 @@ export default function Checkout() {
               <h3 className="text-xl font-semibold mb-2">Items:</h3>
               <ul>
                 {cart.map(product => (
-                  <li key={product.ProductID} className="flex justify-between mb-2">
-                    <span>{product.Name}</span>
-                    <span>${(product.RetailPrice * product.quantity).toFixed(2)}</span>
-                  </li>
+                  <li key={product.id}>{product.name} x {product.quantity} - ${product.RetailPrice}</li>
                 ))}
               </ul>
             </div>
-            <div className="flex justify-between font-semibold">
-              <span>Total Amount</span>
-              <span>${totalAmount.toFixed(2)}</span>
-            </div>
+            <div className="mt-4 text-lg font-bold">Total: ${totalAmount.toFixed(2)}</div>
           </div>
         </div>
       </div>

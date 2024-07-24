@@ -80,7 +80,13 @@ export default async function handle(req, res) {
 
                 if (response.ok) {
                   messageDiv.style.color = 'green';
+                  localStorage.setItem('userEmail', result.email); // Store email in local storage
                   localStorage.setItem('username', result.username); // Store username in local storage
+                  localStorage.setItem('username', result.firstname); // Store firstname in local storage
+                  localStorage.setItem('username', result.lastname); // Store lastname in local storage
+                  localStorage.setItem('username', result.gender); // Store gender in local storage
+
+                  
                   window.location.href = 'http://localhost:3000';
                 } else {
                   messageDiv.style.color = 'red';
@@ -120,11 +126,11 @@ export default async function handle(req, res) {
         return res.status(401).json({ message: 'Invalid password' });
       }
 
-      return res.status(200).json({ message: 'Login successful', username: user.Username });
+      return res.status(200).json({ message: 'Login successful', email: user.Email, username: user.Username, firstname:user.FirstName, lastname:user.LastName, gender:user.Gender });
     }
 
     res.setHeader('Allow', ['GET', 'POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`); 
+    return res.status(405).end('Method ${req.method} Not Allowed'); 
   } catch (error) {
     console.error('Error during login:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -132,3 +138,4 @@ export default async function handle(req, res) {
     await prisma.$disconnect();
   }
 }
+

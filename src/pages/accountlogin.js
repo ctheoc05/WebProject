@@ -23,6 +23,11 @@ const AccountLogin = () => {
     if (response.ok) {
       setMessage('Login successful!');
       localStorage.setItem('username', result.username); // Store username in local storage
+      localStorage.setItem('email', result.email); // Store username in local storage
+      localStorage.setItem('firstname', result.firstname); // Store firstname in local storage
+      localStorage.setItem('lastname', result.lastname); // Store lastname in local storage
+      localStorage.setItem('gender', result.gender); // Store gender in local storage
+
       Router.push('/'); // Redirect to the homepage
     } else {
       setMessage(result.message);
@@ -56,7 +61,7 @@ const AccountLogin = () => {
           <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
             Login
           </button>
-          {message && <div className="mt-4 text-green-500">{message}</div>}
+          {message && <div className="mt-4 text-red-500">{message}</div>}
         </form>
       </div>
     </div>
