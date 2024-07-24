@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from "./components/Navbar";
 import "../app/globals.css";
+import { useRouter } from 'next/router';
 
 export default function Cart() {
   const [cart, setCart] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
@@ -13,29 +14,48 @@ export default function Cart() {
     }
   }, []);
 
-  const handleRemoveFromCart = (productID) => {
-    const updatedCart = cart.map(product => {
-      if (product.ProductID === productID) {
-        return { ...product, quantity: product.quantity - 1 };
-      }
-      return product;
-    }).filter(product => product.quantity > 0);
+  const updateCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
+    // Trigger a local storage change event
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const handleRemoveFromCart = (productID) => {
+    const updatedCart = cart.reduce((newCart, product) => {
+      if (product.ProductID === productID) {
+        if (product.quantity > 1) {
+          newCart.push({ ...product, quantity: product.quantity - 1 });
+        }
+      } else {
+        newCart.push(product);
+      }
+      return newCart;
+    }, []);
+    updateCart(updatedCart);
   };
 
   const handleAddToCart = (productID) => {
     const updatedCart = cart.map(product => {
       if (product.ProductID === productID) {
-        return { ...product, quantity: product.quantity + 1 };
+        return { ...product, quantity: (product.quantity || 1) + 1 };
       }
       return product;
     });
-    setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+    if (!updatedCart.some(product => product.ProductID === productID)) {
+      const productToAdd = cart.find(product => product.ProductID === productID);
+      updatedCart.push({ ...productToAdd, quantity: 1 });
+    }
+
+    updateCart(updatedCart);
   };
 
-  const totalAmount = cart.reduce((total, product) => total + (product.RetailPrice * product.quantity), 0);
+  const totalAmount = cart.reduce((total, product) => total + (parseFloat(product.RetailPrice) * (product.quantity || 1)), 0);
+
+  const handleProceedToCheckout = () => {
+    router.push('/checkout');
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -53,8 +73,10 @@ export default function Cart() {
                   <div className="p-4">
                     <h2 className="text-xl font-bold">{product.Name}</h2>
                     <p className="text-gray-600">Category: {product.Category}</p>
-                    <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
-                    <p className="text-gray-800 font-semibold">Quantity: {product.quantity}</p>
+                    <p className="text-gray-800 font-semibold">
+                      Price: ${parseFloat(product.RetailPrice).toFixed(2)}
+                    </p>
+                    <p className="text-gray-800 font-semibold">Quantity: {product.quantity || 1}</p>
                     <div className="flex items-center mt-4">
                       <button 
                         onClick={() => handleRemoveFromCart(product.ProductID)}
@@ -75,7 +97,10 @@ export default function Cart() {
             </div>
             <div className="mt-8 text-right">
               <h2 className="text-2xl font-bold">Total: ${totalAmount.toFixed(2)}</h2>
-              <button className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
+              <button 
+                onClick={handleProceedToCheckout}
+                className="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              >
                 Proceed to Checkout
               </button>
             </div>
