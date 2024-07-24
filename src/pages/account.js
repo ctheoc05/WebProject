@@ -15,18 +15,29 @@ export default function Account() {
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+
   const router = useRouter();
 
   useEffect(() => {
     // Check if user is logged in
-    const username = localStorage.getItem('username');
-    if (username) {
-      setIsLoggedIn(true);
-      // Fetch user data (this should be a protected API endpoint)
-      fetch('/api/user')
-        .then((res) => res.json())
-        .then((data) => setUserData(data))
-        .catch((err) => console.error(err));
+    if (typeof window !== 'undefined') {
+      const storedUsername = localStorage.getItem('username');
+      const storedEmail= localStorage.getItem('email');
+      if (storedUsername) {
+        setIsLoggedIn(true);
+        setUsername(storedUsername);
+        setEmail(storedEmail);
+        // Fetch user data (this should be a protected API endpoint)
+        fetch(`/api/users?email=${storedUsername}`)
+        fetch(`/api/users/email=${storedEmail}`)
+
+          .then((res) => res.json())
+          .then((data) => setUserData(data))
+          .catch((err) => console.error(err));
+
+      }
     }
   }, []);
 
@@ -72,11 +83,15 @@ export default function Account() {
       <div className="container">
         {isLoggedIn ? (
           <div className="user-info">
-            <h1>Welcome, {userData?.username}</h1>
-            <p>Email: {userData?.email}</p>
-            <p>First Name: {userData?.firstName}</p>
-            <p>Last Name: {userData?.lastName}</p>
-            <button onClick={handleLogout}>Logout</button>
+            <h1>Welcome, {username}!</h1>
+            
+            <div className="user-details">
+            <h1>Email= {email}</h1>
+              <p><strong>First Name:</strong> {userData?.username}</p>
+              <p><strong>Last Name:</strong> {userData?.lastName}</p>
+              <p><strong>Gender:</strong> {userData?.gender}</p>
+              <button className="logout-button" onClick={handleLogout}>Logout</button>
+            </div>
           </div>
         ) : (
           <div className="form-container">
@@ -117,7 +132,7 @@ export default function Account() {
                 I agree to the Terms and Conditions
               </label>
               <div className="button-container">
-                <button type="submit" className="submit-button"onClick={() => router.push('/accountlogin')}>Signup</button>
+                <button type="submit" className="submit-button">Signup</button>
                 <button type="button" className="login-button" onClick={() => router.push('/accountlogin')}>Login</button>
               </div>
               {error && <div className="error">{error}</div>}
@@ -133,6 +148,31 @@ export default function Account() {
         }
         .user-info {
           text-align: center;
+          background: #f0f0f0;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .user-details {
+          margin-top: 20px;
+        }
+        .user-details p {
+          font-size: 1.1rem;
+          color: #555;
+          margin: 10px 0;
+        }
+        .logout-button {
+          background-color: #dc3545;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          font-size: 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          margin-top: 20px;
+        }
+        .logout-button:hover {
+          opacity: 0.8;
         }
         .form-container {
           max-width: 1000px;
