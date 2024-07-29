@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaShoppingCart } from 'react-icons/fa';
+import { FaBars, FaTimes, FaShoppingCart, FaHeart } from 'react-icons/fa';
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
@@ -11,8 +11,8 @@ const Navbar = () => {
   const links = [
     { id: 1, link: 'Home', href: '/' },
     { id: 2, link: 'About', href: '/about' },
-    { id: 3, link: 'Contact', href: '/contact' },
-    { id: 4, link: 'Account', href: '/account' },
+    { id: 3, link: 'Account', href: '/account' },
+    { id: 4, link: '', href: '/wishlist', icon: <FaHeart size={20} /> },
   ];
 
   useEffect(() => {
@@ -66,10 +66,12 @@ const Navbar = () => {
       </div>
 
       <ul className="hidden md:flex items-center">
-        {links.map(({ id, link, href }) => (
+        {links.map(({ id, link, href, icon }) => (
           <li key={id} className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 link-underline">
             <Link href={href} legacyBehavior>
-              <a>{link}</a>
+              <a className="flex items-center">
+                {icon || link}
+              </a>
             </Link>
           </li>
         ))}
@@ -94,10 +96,12 @@ const Navbar = () => {
 
       {nav && (
         <ul className="flex flex-col justify-center items-center absolute top-0 left-0 w-full h-screen bg-gray-100">
-          {links.map(({ id, link, href }) => (
+          {links.map(({ id, link, href, icon }) => (
             <li key={id} className="px-4 cursor-pointer capitalize py-6 text-2xl">
               <Link href={href} legacyBehavior>
-                <a onClick={() => setNav(!nav)}>{link}</a>
+                <a onClick={() => setNav(!nav)} className="flex items-center">
+                  {icon || link}
+                </a>
               </Link>
             </li>
           ))}

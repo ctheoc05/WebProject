@@ -4,7 +4,7 @@ import "../app/globals.css";
 
 // Function to get user email from localStorage
 const getUserEmail = () => {
-  return localStorage.getItem('userEmail');
+  return localStorage.getItem('email');
 };
 
 export default function Checkout() {

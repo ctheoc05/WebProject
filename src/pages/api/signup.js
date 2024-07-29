@@ -1,3 +1,4 @@
+//pages/api/signup.js
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 const saltRounds=10;
@@ -192,6 +193,19 @@ export default async function handle(req, res) {
     }
 
     try {
+      // Check if email or username already exists
+      const existingUser = await prisma.Users.findFirst({
+        where: {
+          OR: [
+            { Email: email.toLowerCase() },
+            { Username: username }
+          ]
+        }
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email or username already exists.' });
+      }
       const hashedPassword= await bcrypt.hash(password,saltRounds)
       const user = await prisma.Users.create({
         data: {

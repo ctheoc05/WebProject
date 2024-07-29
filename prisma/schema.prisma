@@ -8,12 +8,15 @@ datasource db {
 }
 
 model Orders {
-  OrderID        Int       @id(map: "PK__Orders__C3905BAF7CFAF49D") @default(autoincrement())
-  OrderDate      DateTime? @default(now(), map: "DF__Orders__OrderDat__5224328E") @db.DateTime
-  CustomerID     Int?
+  OrderID        Int            @id(map: "PK__Orders__C3905BAF7CFAF49D") @default(autoincrement())
+  OrderDate      DateTime?      @default(now(), map: "DF__Orders__OrderDat__5224328E") @db.DateTime
   ProductID      Int?
   Quantity       Int?
-  ProductsAnthia Products? @relation(fields: [ProductID], references: [ProductID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_ProductsAnthia")
+  Email          String?        @db.VarChar(50)
+  Delivery       Delivery[]
+  OrderProduct   OrderProduct[]
+  ProductsAnthia Products?      @relation(fields: [ProductID], references: [ProductID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_ProductsAnthia")
+  Users          Users?         @relation(fields: [Email], references: [Email], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_Users")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -36,15 +39,16 @@ model sysdiagrams {
 }
 
 model Users {
-  UserID       Int      @default(autoincrement())
-  Email        String   @id(map: "PK_Users") @db.VarChar(50)
-  FirstName    String?  @db.VarChar(50)
-  LastName     String?  @db.VarChar(50)
-  Gender       String?  @db.VarChar(3)
-  Username     String?  @db.VarChar(30)
-  Password     String?  @db.NVarChar(255)
+  UserID       Int        @default(autoincrement())
+  Email        String     @id(map: "PK_Users") @db.VarChar(50) @unique
+  FirstName    String?    @db.VarChar(50)
+  LastName     String?    @db.VarChar(50)
+  Gender       String?    @db.VarChar(3)
+  Username     String?    @db.VarChar(30) @unique
+  Password     String?    @db.NVarChar(255)
   AgreeToTerms Boolean?
   Orders       Orders[]
+  Wishlist     Wishlist[]
 }
 
 model Customers {
@@ -64,6 +68,7 @@ model Products {
   QtyInStock   Int
   OrderProduct OrderProduct[]
   Orders       Orders[]
+  Wishlist     Wishlist[]
 }
 
 model Delivery {
@@ -89,15 +94,12 @@ model OrderProduct {
   @@id([OrderID, ProductID], map: "PK__OrderPro__08D097C17991A3C4")
 }
 
-model Delivery {
-  DeliveryID    Int    @id(map: "PK__Delivery__626D8FEE7E3C80DA") @default(autoincrement())
-  OrderID       Int
-  FullName      String @db.NVarChar(255)
-  Street        String @db.NVarChar(255)
-  StreetNumber  String @db.NVarChar(50)
-  City          String @db.NVarChar(255)
-  PostalCode    String @db.NVarChar(50)
-  Country       String @db.NVarChar(255)
-  PaymentMethod String @db.NVarChar(50)
-  Orders        Orders @relation(fields: [OrderID], references: [OrderID], onUpdate: NoAction, map: "FK_Delivery_OrderID")
+model Wishlist {
+  WishlistID Int      @id(map: "PK__Wishlist__233189CB9086D5D8") @default(autoincrement())
+  Email      String   @db.VarChar(50)
+  Username   String   @db.VarChar(30)
+  ProductID  Int
+  Quantity   Int?     @default(1, map: "DF__Wishlist__Quanti__00DF2177")
+  Products   Products @relation(fields: [ProductID], references: [ProductID], onUpdate: NoAction, map: "FK_Wishlist_Products")
+  Users      Users    @relation(fields: [Email], references: [Email], onUpdate: NoAction, map: "FK_Wishlist_Users")
 }

@@ -5,6 +5,7 @@ import "../app/globals.css";
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState('All');
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
 
   useEffect(() => {
@@ -15,32 +16,14 @@ export default function Home() {
     }
     fetchProducts();
 
+    const storedEmail = localStorage.getItem('email');
     const storedUsername = localStorage.getItem('username');
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
     if (storedUsername) {
       setUsername(storedUsername);
     }
-
-    // Update cart count when the page is loaded
-    const updateCartCount = () => {
-      const storedCart = localStorage.getItem('cart');
-      if (storedCart) {
-        const cart = JSON.parse(storedCart);
-        const count = cart.reduce((total, product) => total + (product.quantity || 1), 0);
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'cart',
-          newValue: JSON.stringify(cart),
-        }));
-      }
-    };
-
-    updateCartCount();
-
-    // Listen for storage changes to update cart count
-    window.addEventListener('storage', updateCartCount);
-
-    return () => {
-      window.removeEventListener('storage', updateCartCount);
-    };
   }, []);
 
   const filteredProducts = category === 'All' ? products : products.filter(product => product.Category === category);
@@ -64,6 +47,35 @@ export default function Home() {
     window.dispatchEvent(event);
   };
 
+  const handleAddToWishlist = async (product, quantity = 1) => {
+    const email = localStorage.getItem('email'); // Assume email is stored in localStorage
+    const username = localStorage.getItem('username'); // Assume username is stored in localStorage
+
+    if (!email || !username) {
+      alert('You must be logged in to add items to your wishlist.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/wishlistADD', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, username, productId: product.ProductID, quantity }),
+      });
+
+      if (response.ok) {
+        alert('Item added to wishlist.');
+      } else {
+        const errorData = await response.json();
+        alert('Error adding item to wishlist: ${errorData.error}');
+      }
+    } catch (error) {
+      alert('Error adding item to wishlist.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -74,7 +86,7 @@ export default function Home() {
           </div>
         </div>
 
-        {username && (
+        {email && (
           <div className="text-center mt-4">
             <h2 className="text-2xl font-semibold">Welcome, {username}!</h2>
           </div>
@@ -110,6 +122,12 @@ export default function Home() {
                   >
                     Add to Cart
                   </button>
+                  <button
+                    onClick={() => handleAddToWishlist(product)}
+                    className="mt-4 ml-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                  >
+                    Add to Wishlist
+                  </button>
                 </div>
               </div>
             ))}
@@ -119,4 +137,3 @@ export default function Home() {
     </div>
   );
 }
-

@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       const orderProducts = cart.map(product => ({
         OrderID: order.OrderID,
         ProductID: product.ProductID,
-        Quantity: order.Quantity,
+        Quantity: product.quantity,
        
       }));
 

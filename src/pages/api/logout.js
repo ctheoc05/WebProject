@@ -1,3 +1,4 @@
+
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -91,7 +92,11 @@ export default async function handle(req, res) {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
-                    'username': localStorage.getItem('username'), // Add username to headers
+                    'username': localStorage.getItem('username'),
+                    'email': localStorage.getItem('email'),
+                    'firstname': localStorage.getItem('firstname'),
+                    'lastname': localStorage.getItem('lastname'),
+                    'gender': localStorage.getItem('gender')
                   },
                   body: JSON.stringify(data)
                 });
@@ -100,7 +105,11 @@ export default async function handle(req, res) {
                 const messageDiv = document.getElementById('message');
 
                 if (response.ok) {
-                  localStorage.removeItem('username'); // Remove username from local storage
+                  localStorage.removeItem('username');
+                  localStorage.removeItem('email');
+                  localStorage.removeItem('firstname');
+                  localStorage.removeItem('lastname');
+                  localStorage.removeItem('gender');
                   window.location.href = '/';
                 } else {
                   messageDiv.textContent = result.message;
@@ -119,18 +128,23 @@ export default async function handle(req, res) {
     if (req.method === 'POST') {
       const { password } = req.body;
       const username = req.headers.username;
+      const email = req.headers.email;
+      const firstname = req.headers.firstname;
+      const lastname = req.headers.lastname;
+      const gender = req.headers.gender;
 
       if (!password) {
         return res.status(400).json({ message: 'Password is required' });
       }
 
-      if (!username) {
+      if (!username || !email) {
         return res.status(401).json({ message: 'No user is logged in' });
       }
 
       const user = await prisma.Users.findUnique({
         where: {
           Username: username,
+          Email: email,
         },
       });
 
@@ -148,7 +162,7 @@ export default async function handle(req, res) {
     }
 
     res.setHeader('Allow', ['GET', 'POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).end('Method ${req.method} Not Allowed');
   } catch (error) {
     console.error('Error during logout:', error);
     return res.status(500).json({ message: 'Internal server error', error: error.message });
