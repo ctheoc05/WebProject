@@ -1,24 +1,29 @@
-// pages/api/products.js
-//import Products from "..";
 import prisma from "../../../lib/prisma";
 
 export default async function handle(req, res) {
     console.log('received request to /api/products');
 
-    try{
-
+    try {
         console.log('prisma client:', prisma);
-        console.log('prisma product model: 2', prisma.Products);
+        console.log('prisma product model:', prisma.Products);
 
-  const products = await prisma.Products.findMany();
-  console.log('fetch products: ', products);
-  res.status(200).json(products);
+        const products = await prisma.products.findMany({
+            select: {
+                ProductID: true,
+                Name: true,
+                Category: true,
+                RetailPrice: true,
+                QtyInStock: true,
+                ImageURL: true, // Ensure this field is selected
+            },
+        });
 
-
-    }catch(error){
+        console.log('fetched products: ', products);
+        res.status(200).json(products);
+    } catch (error) {
         console.log('there is an error in products');
-        console.error('Faild to load products', error.message);
-         console.error('error stack:', error.stack);
-  res.status(500).json({error:'Faild to load products', details: error.message});
-  res.json(Products);
-}   }
+        console.error('Failed to load products', error.message);
+        console.error('error stack:', error.stack);
+        res.status(500).json({ error: 'Failed to load products', details: error.message });
+    }
+}

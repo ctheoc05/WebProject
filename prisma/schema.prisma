@@ -66,8 +66,10 @@ model Products {
   Name         String         @db.NVarChar(100)
   RetailPrice  Decimal        @db.Decimal(10, 2)
   QtyInStock   Int
+  ImageURL     String?
   OrderProduct OrderProduct[]
   Orders       Orders[]
+  Wishlist     Wishlist[]
 }
 
 model sysdiagrams {
@@ -81,13 +83,24 @@ model sysdiagrams {
 }
 
 model Users {
-  UserID       Int      @default(autoincrement())
-  Email        String   @id(map: "PK_Users") @db.VarChar(50) @unique
-  FirstName    String?  @db.VarChar(50)
-  LastName     String?  @db.VarChar(50)
-  Gender       String?  @db.VarChar(3)
-  Username     String?  @db.VarChar(30)  @unique
-  Password     String?  @db.NVarChar(255)
+  UserID       Int        @default(autoincrement())
+  Email        String     @id(map: "PK_Users") @db.VarChar(50) @unique
+  FirstName    String?    @db.VarChar(50)
+  LastName     String?    @db.VarChar(50)
+  Gender       String?    @db.VarChar(3)
+  Username     String?    @db.VarChar(30) @unique
+  Password     String?    @db.NVarChar(255)
   AgreeToTerms Boolean?
   Orders       Orders[]
+  Wishlist     Wishlist[]
+}
+
+model Wishlist {
+  WishlistID Int      @id(map: "PK__Wishlist__233189CB9086D5D8") @default(autoincrement())
+  Email      String   @db.VarChar(50)
+  Username   String   @db.VarChar(30)
+  ProductID  Int
+  Quantity   Int?     @default(1, map: "DF__Wishlist__Quanti__00DF2177")
+  Products   Products @relation(fields: [ProductID], references: [ProductID], onUpdate: NoAction, map: "FK_Wishlist_Products")
+  Users      Users    @relation(fields: [Email], references: [Email], onUpdate: NoAction, map: "FK_Wishlist_Users")
 }
