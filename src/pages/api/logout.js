@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -79,7 +78,7 @@ export default async function handle(req, res) {
                 <button type="submit">Logout</button>
               </form>
               <div id="message" class="message"></div>
-              <a href="/" class="link">Cancel</a>
+              <a href="/account#" class="link">Cancel</a>
             </div>
             <script>
               async function handleSubmit(event) {
