@@ -65,12 +65,12 @@ export default function Home() {
         body: JSON.stringify({ email, username, productId: product.ProductID, quantity }),
       });
 
-      if (response.ok) {
-        alert('Item added to wishlist.');
-      } else {
-        const errorData = await response.json();
-        alert('Error adding item to wishlist: ${errorData.error}');
-      }
+      // if (response.ok) {
+      //   alert('Item added to wishlist.');
+      // } else {
+      //   const errorData = await response.json();
+      //   alert('Error adding item to wishlist: ${errorData.error}');
+      // }
     } catch (error) {
       alert('Error adding item to wishlist.');
     }
@@ -124,9 +124,10 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => handleAddToWishlist(product)}
-                    className="mt-4 ml-2 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                    className="mt-4 ml-2 bg-white text-white py-2 px-4 rounded hover:bg--600 hover:scale-125"
                   >
-                    Add to Wishlist
+                
+                  ❤️
                   </button>
                 </div>
               </div>

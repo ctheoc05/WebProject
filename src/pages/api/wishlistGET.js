@@ -13,15 +13,15 @@ export default async function handler(req, res) {
     const wishlistItems = await prisma.wishlist.findMany({
       where: { Email: email },
       include: {
-        ProductID: true, // Correctly include the related Products
+        Products: true, // Ensure related products are included
       },
     });
 
-    console.log('Fetched wishlist items:', wishlistItems);
+    console.log('Fetched wishlist items:', wishlistItems); // Logging for debugging
 
     res.status(200).json(wishlistItems);
   } catch (error) {
-    console.error('Error fetching wishlist items:', error);
-    res.status(500).json({ error: 'Error fetching wishlist items.' });
+    console.error('Error fetching wishlist items:', error); // Detailed logging
+    res.status(500).json({ error: 'Error fetching wishlist items.', details: error.message });
   }
 }

@@ -5,10 +5,10 @@ import "../app/globals.css";
 export default function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [email, setEmail] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem('email');
-    console.log('Stored Email:', storedEmail); // Add this line for logging
     if (storedEmail) {
       setEmail(storedEmail);
     }
@@ -18,19 +18,14 @@ export default function Wishlist() {
 
       try {
         const response = await fetch(`/api/wishlistGET?email=${storedEmail}`);
-        console.log('Response Status:', response.status); // Add this line for logging
         if (!response.ok) {
-          throw new Error('Failed to fetch wishlist items');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch wishlist items');
         }
         const data = await response.json();
-        console.log('Fetched Data:', data); // Add this line for logging
-
-        if (Array.isArray(data)) {
-          setWishlist(data);
-        } else {
-          console.error('Expected an array but got:', data);
-        }
+        setWishlist(data);
       } catch (error) {
+        setError(error.message);
         console.error('Error fetching wishlist items:', error);
       }
     }
@@ -49,12 +44,27 @@ export default function Wishlist() {
       });
 
       if (response.ok) {
-        setWishlist(wishlist.filter(item => item.ProductID !== productID));
+        setWishlist((prevWishlist) => {
+          const itemIndex = prevWishlist.findIndex(item => item.ProductID === productID);
+          if (itemIndex !== -1) {
+            const updatedWishlist = [...prevWishlist];
+            if (updatedWishlist[itemIndex].Quantity > 1) {
+              updatedWishlist[itemIndex].Quantity -= 1;
+            } else {
+              updatedWishlist.splice(itemIndex, 1);
+            }
+            return updatedWishlist;
+          }
+          return prevWishlist;
+        });
       } else {
-        console.error('Failed to remove item from wishlist');
+        const errorData = await response.json();
+        console.error('Failed to remove item from wishlist:', errorData.error);
+        setError(errorData.error);
       }
     } catch (error) {
       console.error('Error removing item from wishlist:', error);
+      setError(error.message);
     }
   };
 
@@ -63,6 +73,7 @@ export default function Wishlist() {
       <Navbar />
       <div className="pt-20 container mx-auto py-8">
         <h1 className="text-4xl font-bold mb-8">Your Wishlist</h1>
+        {error && <p className="text-red-500">{error}</p>}
         {wishlist.length === 0 ? (
           <p>Your wishlist is empty</p>
         ) : (
@@ -74,7 +85,9 @@ export default function Wishlist() {
                   <div className="p-4">
                     <h2 className="text-xl font-bold">{item.Products.Name}</h2>
                     <p className="text-gray-600">Category: {item.Products.Category}</p>
-                    <p className="text-gray-800 font-semibold">Price: ${item.Products.RetailPrice.toFixed(2)}</p>
+                    <p className="text-gray-800 font-semibold">
+                      Price: ${parseFloat(item.Products.RetailPrice).toFixed(2)}
+                    </p>
                     <p className="text-gray-800 font-semibold">Quantity: {item.Quantity}</p>
                     <div className="flex items-center mt-4">
                       <button 
