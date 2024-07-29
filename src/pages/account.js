@@ -17,6 +17,10 @@ export default function Account() {
   const [userData, setUserData] = useState(null);
   const [isLoginPrompt, setIsLoginPrompt] = useState(false); // For showing login prompt
   const [activeSection, setActiveSection] = useState('profile'); // New state for managing active section
+  const [addresses, setAddresses] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -41,6 +45,28 @@ export default function Account() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      // Fetch addresses and orders when user is logged in
+      fetchAddresses();
+      fetchOrders();
+    }
+  }, [isLoggedIn]);
+
+  const fetchAddresses = async () => {
+    // Fetch addresses from API
+    const response = await fetch('/api/addresses');
+    const data = await response.json();
+    setAddresses(data);
+  };
+
+  const fetchOrders = async () => {
+    // Fetch orders from API
+    const response = await fetch('/api/orders');
+    const data = await response.json();
+    setOrders(data);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -100,6 +126,26 @@ export default function Account() {
     }
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    const response = await fetch('/api/changePassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      setCurrentPassword('');
+      setNewPassword('');
+      setError('');
+    } else {
+      setError(result.message);
+    }
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const submissionData = {
@@ -126,17 +172,26 @@ export default function Account() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('username');
-    localStorage.removeItem('email');
-    localStorage.removeItem('firstname');
-    localStorage.removeItem('lastname');
-    localStorage.removeItem('gender');
-    router.push('/api/logout');
+  const redirectToLogout = () => {
+    window.location.href = '/api/logout';
   };
 
-  const handlesubmit = () => {
-    router.push('/saccount#');
+
+  const handleAddAddress = () => {
+    // Logic to add a new address
+  };
+
+  const handleEditAddress = (id) => {
+    // Logic to edit an address
+  };
+
+  const handleDeleteAddress = (id) => {
+    // Logic to delete an address
+    setAddresses(addresses.filter(address => address.id !== id));
+  };
+
+  const handleSubmit = () => {
+    router.push('/account#');
   };
 
   return (
@@ -150,6 +205,9 @@ export default function Account() {
                 <ul>
                   <li><a href="#" onClick={() => setActiveSection('profile')}>My Profile</a></li>
                   <li><a href="#" onClick={() => setActiveSection('settings')}>Account Settings</a></li>
+                  <li><a href="#" onClick={() => setActiveSection('addresses')}>Address Book</a></li>
+                  <li><a href="#" onClick={() => setActiveSection('orders')}>Order History</a></li>
+                  <li><a href="#" onClick={() => setActiveSection('security')}>Account Security</a></li>
                 </ul>
               </nav>
             </aside>
@@ -210,9 +268,52 @@ export default function Account() {
                         <option value="Other">Other</option>
                       </select>
                     </div>
-                    <button className="submit" onClick={handlesubmit}>Save</button>
+                    <button className="submit" onClick={handleSubmit}>Save</button>
                   </form>
-                  <button className="logout-button" onClick={handleLogout}>Logout</button>
+                  <button className="logout-button" onClick={redirectToLogout}>Logout</button>
+                </section>
+              )}
+              {activeSection === 'addresses' && (
+                <section id="addresses" className="account-section">
+                  <h2 className="form-heading">Address Book</h2>
+                  <button onClick={handleAddAddress}>Add Address</button>
+                  <ul>
+                    {addresses.map(address => (
+                      <li key={address.id}>
+                        {address.street}, {address.city}, {address.state}, {address.zip}
+                        <button onClick={() => handleEditAddress(address.id)}>Edit</button>
+                        <button onClick={() => handleDeleteAddress(address.id)}>Delete</button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              {activeSection === 'orders' && (
+                <section id="orders" className="account-section">
+                  <h2 className="form-heading">Order History</h2>
+                  <ul>
+                    {orders.map(order => (
+                      <li key={order.id}>
+                        Order #{order.id} - {order.date} - ${order.total}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              {activeSection === 'security' && (
+                <section id="security" className="account-section">
+                  <h2 className="form-heading">Account Security</h2>
+                  <form onSubmit={handleChangePassword} className="account-form">
+                    <div className="form-group">
+                      <label>Current Password</label>
+                      <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+                    </div>
+                    <div className="form-group">
+                      <label>New Password</label>
+                      <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+                    </div>
+                    <button type="submit" className="submit">Change Password</button>
+                  </form>
                 </section>
               )}
             </main>
@@ -260,11 +361,11 @@ export default function Account() {
                   <div className="form-group">
                     <label>
                       <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleChange} required />
-                     <span className="checkbox-label"> I agree to the Terms and Conditions</span>
+                      <span className="checkbox-label"> I agree to the Terms and Conditions</span>
                     </label>
                   </div>
                   <div className="button-container">
-                    <button type="submit" className="submit-button"onClick={() => ('/accountlogin')}>Signup</button>
+                    <button type="submit" className="submit-button">Signup</button>
                     <button type="button" className="login-button" onClick={() => router.push('/accountlogin')}>Login</button>
                   </div>
                   {error && <div className="error">{error}</div>}
@@ -335,19 +436,10 @@ export default function Account() {
         }
         .form-group label {
           display: center;
-          align-items:center;
+          align-items: center;
           margin-bottom: 15px;
           font-weight: bold;
         }
-        
-        .from-group input[type="checkbox"]{
-        margin-left: 20px;
-        }
-
-        .from-group .checkbox-label{
-        margin:0;
-        }
-
         .form-group input,
         .form-group select {
           width: 100%;
@@ -355,14 +447,13 @@ export default function Account() {
           border: 1px solid #ccc;
           border-radius: 4px;
         }
-
         .button-container {
           display: flex;
           justify-content: space-between;
         }
         .submit,
         .login-button,
-        .submit{
+        .submit {
           width: 48%;
           padding: 10px;
           border: none;
@@ -398,6 +489,6 @@ export default function Account() {
           text-align: center;
         }
       `}</style>
-    </div> 
+    </div>
   );
 }
