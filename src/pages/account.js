@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from './components/Navbar';
+import "../app/globals.css";
 
 export default function Account() {
   const [formData, setFormData] = useState({
@@ -15,8 +17,8 @@ export default function Account() {
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [isLoginPrompt, setIsLoginPrompt] = useState(false); // For showing login prompt
-  const [activeSection, setActiveSection] = useState('profile'); // New state for managing active section
+  const [isLoginPrompt, setIsLoginPrompt] = useState(false);
+  const [activeSection, setActiveSection] = useState('profile');
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -48,21 +50,18 @@ export default function Account() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Fetch addresses and orders when user is logged in
       fetchAddresses();
       fetchOrders();
     }
   }, [isLoggedIn]);
 
   const fetchAddresses = async () => {
-    // Fetch addresses from API
     const response = await fetch('/api/addresses');
     const data = await response.json();
     setAddresses(data);
   };
 
   const fetchOrders = async () => {
-    // Fetch orders from API
     const response = await fetch('/api/orders');
     const data = await response.json();
     setOrders(data);
@@ -93,7 +92,7 @@ export default function Account() {
 
     const result = await response.json();
     if (response.ok) {
-      localStorage.setItem('email', result.email); // Assuming API returns user email
+      localStorage.setItem('email', result.email);
       setIsLoggedIn(true);
       setIsLoginPrompt(false);
       router.push('/accountlogin');
@@ -128,21 +127,35 @@ export default function Account() {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    const response = await fetch('/api/changePassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ currentPassword, newPassword }),
-    });
+    const { username, email } = userData;
 
-    const result = await response.json();
-    if (response.ok) {
-      setCurrentPassword('');
-      setNewPassword('');
-      setError('');
-    } else {
-      setError(result.message);
+    if (!username || !email) {
+      setError('You must be logged in to change your password.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/changePassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'username': username,
+          'email': email,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setCurrentPassword('');
+        setNewPassword('');
+        setError('');
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      setError('An error occurred while changing the password.');
     }
   };
 
@@ -163,7 +176,7 @@ export default function Account() {
 
     const result = await response.json();
     if (response.ok) {
-      localStorage.setItem('email', result.email); // Assuming API returns user email
+      localStorage.setItem('email', result.email);
       setIsLoggedIn(true);
       setIsLoginPrompt(false);
       router.push('/account');
@@ -176,7 +189,6 @@ export default function Account() {
     window.location.href = '/api/logout';
   };
 
-
   const handleAddAddress = () => {
     // Logic to add a new address
   };
@@ -186,7 +198,6 @@ export default function Account() {
   };
 
   const handleDeleteAddress = (id) => {
-    // Logic to delete an address
     setAddresses(addresses.filter(address => address.id !== id));
   };
 
@@ -268,7 +279,7 @@ export default function Account() {
                         <option value="Other">Other</option>
                       </select>
                     </div>
-                    <button className="submit" onClick={handleSubmit}>Save</button>
+                    <button className="submit" type="submit">Save</button>
                   </form>
                   <button className="logout-button" onClick={redirectToLogout}>Logout</button>
                 </section>
@@ -313,6 +324,7 @@ export default function Account() {
                       <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
                     </div>
                     <button type="submit" className="submit">Change Password</button>
+                    {error && <div className="error">{error}</div>}
                   </form>
                 </section>
               )}

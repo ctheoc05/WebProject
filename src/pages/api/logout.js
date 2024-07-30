@@ -1,3 +1,4 @@
+//pages/api/Logout.js
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 

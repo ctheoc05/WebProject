@@ -10,9 +10,16 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const response = await fetch('/api/products');
-      const data = await response.json();
-      setProducts(data);
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
     }
     fetchProducts();
 
@@ -48,8 +55,8 @@ export default function Home() {
   };
 
   const handleAddToWishlist = async (product, quantity = 1) => {
-    const email = localStorage.getItem('email'); // Assume email is stored in localStorage
-    const username = localStorage.getItem('username'); // Assume username is stored in localStorage
+    const email = localStorage.getItem('email');
+    const username = localStorage.getItem('username');
 
     if (!email || !username) {
       alert('You must be logged in to add items to your wishlist.');
@@ -65,12 +72,12 @@ export default function Home() {
         body: JSON.stringify({ email, username, productId: product.ProductID, quantity }),
       });
 
-      // if (response.ok) {
-      //   alert('Item added to wishlist.');
-      // } else {
-      //   const errorData = await response.json();
-      //   alert('Error adding item to wishlist: ${errorData.error}');
-      // }
+      if (response.ok) {
+        alert('Item added to wishlist.');
+      } else {
+        const errorData = await response.json();
+        alert(`Error adding item to wishlist: ${errorData.message}`);
+      }
     } catch (error) {
       alert('Error adding item to wishlist.');
     }
@@ -124,10 +131,9 @@ export default function Home() {
                   </button>
                   <button
                     onClick={() => handleAddToWishlist(product)}
-                    className="mt-4 ml-2 bg-white text-white py-2 px-4 rounded hover:bg--600 hover:scale-125"
+                    className="mt-4 ml-2 bg-white text-gray-800 py-2 px-4 rounded hover:bg-gray-200"
                   >
-                
-                  ❤️
+                    ❤️
                   </button>
                 </div>
               </div>

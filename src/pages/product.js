@@ -1,3 +1,4 @@
+//pages/product.js
 import { useState, useEffect } from 'react';
 
 const ProductPage = ({ product }) => {
