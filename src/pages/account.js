@@ -14,6 +14,17 @@ export default function Account() {
     gender: '',
     agreeToTerms: false,
   });
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    
+    // Extract day, month, and year
+    const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-11, so add 1
+    const year = date.getFullYear();
+    
+    return `${day}-${month}-${year}`; // Format as DD-MM-YYYY
+  };
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -26,6 +37,7 @@ export default function Account() {
   const router = useRouter();
 
   useEffect(() => {
+    document.title='Account';
     if (typeof window !== 'undefined') {
       const storedUsername = localStorage.getItem('username');
       const storedEmail = localStorage.getItem('email');
@@ -62,7 +74,11 @@ export default function Account() {
   };
 
   const fetchOrders = async () => {
-    const response = await fetch('/api/orders');
+    if(!userData?.email)
+      {return;
+
+    }
+    const response = await fetch(`/api/orders?email=${userData.email}`);
     const data = await response.json();
     setOrders(data);
   };
@@ -299,18 +315,32 @@ export default function Account() {
                   </ul>
                 </section>
               )}
-              {activeSection === 'orders' && (
-                <section id="orders" className="account-section">
-                  <h2 className="form-heading">Order History</h2>
-                  <ul>
-                    {orders.map(order => (
-                      <li key={order.id}>
-                        Order #{order.id} - {order.date} - ${order.total}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
+            {activeSection === 'orders' && (
+  <section id="orders" className="account-section">
+    <h2 className="form-heading">Order History</h2>
+    <div>
+      {orders.map(order => (
+        <div key={order.OrderID} className="order-item">
+          <p><strong>Order ID:</strong> {order.OrderID}</p>
+          <p><strong>Order Date:</strong> {formatDate(order.OrderDate)}</p>
+          <p><strong>Total Amount:</strong> {order.totalAmount}</p>
+          <div className="order-products">
+            <h3>Products:</h3>
+            <ul>
+              {order.OrderProduct.map(op => (
+                <li key={op.ProductID}>
+                  <p><strong>Product Name:</strong> {op.Products.Name}</p>
+                  <p><strong>Quantity:</strong> {op.Quantity}</p>
+                  <p><strong>Price:</strong> {op.Products.RetailPrice}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
               {activeSection === 'security' && (
                 <section id="security" className="account-section">
                   <h2 className="form-heading">Account Security</h2>
@@ -425,7 +455,7 @@ export default function Account() {
         }
         .account-section {
           width: 100%;
-          max-width: 600px;
+          max-width: 800px;
           margin-bottom: 40px;
         }
         .account-form {
@@ -500,6 +530,48 @@ export default function Account() {
           margin-top: 10px;
           text-align: center;
         }
+          .order-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px; /* Space between orders */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .order-item h3 {
+    margin-top: 0;
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  .order-item p {
+    margin: 5px 0;
+  }
+
+  .order-item ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+
+  .order-item ul li {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .order-item ul li p {
+    margin: 5px 0;
+  }
+
+  .order-item .order-products {
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
       `}</style>
     </div>
   );

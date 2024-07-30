@@ -41,10 +41,11 @@ model OrderProduct {
 
 model Orders {
   OrderID      Int            @id(map: "PK__Orders__C3905BAF7CFAF49D") @default(autoincrement())
-  OrderDate    DateTime?      @default(now(), map: "DF__Orders__OrderDat__5224328E") @db.DateTime
+  OrderDate    DateTime?      @default(now(), map: "DF__Orders__OrderDat__05A3D694") @db.DateTime
   ProductID    Int?
   Quantity     Int?
   Email        String?        @db.VarChar(50)
+  totalAmount  Float?
   Delivery     Delivery[]
   OrderProduct OrderProduct[]
   Products     Products?      @relation(fields: [ProductID], references: [ProductID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_Products")

@@ -9,6 +9,7 @@ export default function Home() {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
+    document.title='Home';
     async function fetchProducts() {
       try {
         const response = await fetch('/api/products');
@@ -72,12 +73,12 @@ export default function Home() {
         body: JSON.stringify({ email, username, productId: product.ProductID, quantity }),
       });
 
-      if (response.ok) {
-        alert('Item added to wishlist.');
-      } else {
-        const errorData = await response.json();
-        alert(`Error adding item to wishlist: ${errorData.message}`);
-      }
+      // if (response.ok) {
+      //   alert('Item added to wishlist.');
+      // } else {
+      //   const errorData = await response.json();
+      //   alert(`Error adding item to wishlist: ${errorData.message}`);
+      // }
     } catch (error) {
       alert('Error adding item to wishlist.');
     }

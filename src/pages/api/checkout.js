@@ -11,12 +11,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    const totalAmount= cart.reduce((total,product) => total+ (product.RetailPrice * product.quantity),0);
+
     try {
       // Create the order
       const order = await prisma.orders.create({
         data: {
           OrderDate: new Date(),
           Email: email,
+          totalAmount: totalAmount,
+          
         },
       });
 
@@ -46,7 +50,7 @@ export default async function handler(req, res) {
       });
 
       // Send confirmation email
-      await sendOrderConfirmationEmail(email, { cart, deliveryAddress, paymentMethod });
+      // await sendOrderConfirmationEmail(email, { cart, deliveryAddress, paymentMethod });
 
       res.status(200).json({ message: 'Order placed and confirmation email sent successfully!' });
     } catch (error) {

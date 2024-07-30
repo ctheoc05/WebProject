@@ -17,11 +17,12 @@ export default function Checkout() {
     postalCode: '',
     country: '',
   });
-  const [paymentMethod, setPaymentMethod] = useState('creditCard');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
 
   useEffect(() => {
+    document.title='Checkout';
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       setCart(JSON.parse(storedCart));
@@ -71,13 +72,13 @@ export default function Checkout() {
 
       const result = await response.json();
       if (response.ok) {
-        alert('Order placed successfully!');
+        alert('Order placed successfully! Thank you 🎁');
         localStorage.removeItem('cart');
       } else {
         alert('Error: ${result.error}');
       }
     } catch (error) {
-      console.error('Error placing order:', error);
+      console.error('Error placing order ❌:', error);
     }
   };
 
@@ -210,7 +211,19 @@ export default function Checkout() {
               <h3 className="text-xl font-semibold mb-2">Items:</h3>
               <ul>
                 {cart.map(product => (
-                  <li key={product.id}>{product.name} x {product.quantity} - ${product.RetailPrice}</li>
+                  <li key={product.id}>
+                  <img 
+                  src={product.ImageURL}
+                  alt={product.name}
+                  className="w-16 h-16 object-cover mr-4"
+                  />
+                  <div>
+                    <div className= "fon-semibold">{product.name}</div>
+                    <div>
+                    {product.quantity} {product.Name} x ${product.RetailPrice}= ${(product.RetailPrice*product.quantity)}
+                    </div>
+                    </div>
+                    </li>
                 ))}
               </ul>
             </div>
