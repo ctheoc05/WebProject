@@ -58,7 +58,14 @@ const Navbar = () => {
       <div>
         <h1 className="text-5xl font-signature ml-2">
           <Link href="/" legacyBehavior>
-            <a className="link-black">Logo</a>
+            <a className="link-black">
+              <img
+              src="/654073.png"
+              alt="Logo"
+              className="w-10 md:w-15 lg:20 h-auto"
+              
+              />
+            </a>
           </Link>
         </h1>
       </div>

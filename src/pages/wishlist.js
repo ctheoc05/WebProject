@@ -8,6 +8,7 @@ export default function Wishlist() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    document.title='Wishlist';
     const storedEmail = localStorage.getItem('email');
     if (storedEmail) {
       setEmail(storedEmail);

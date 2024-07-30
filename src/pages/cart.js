@@ -8,6 +8,7 @@ export default function Cart() {
   const router = useRouter();
 
   useEffect(() => {
+    document.title='Cart';
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       setCart(JSON.parse(storedCart));
