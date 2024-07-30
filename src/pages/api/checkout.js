@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { sendOrderConfirmationEmail } from '../../utils/sendEmail';
+import nodemailer from 'nodemailer';
 
 const prisma = new PrismaClient();
 
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       });
 
       // Create order-product relationships
-      const orderProducts = cart.map(product => ({
+      const orderProducts = cart.map((product) => ({
         OrderID: order.OrderID,
         ProductID: product.ProductID,
         Quantity: product.quantity,
@@ -45,12 +45,35 @@ export default async function handler(req, res) {
         data: orderProducts,
       });
 
-      // Send confirmation email
-      await sendOrderConfirmationEmail(email, { cart, deliveryAddress, paymentMethod });
+      // Send order confirmation email
+      const transporter = nodemailer.createTransport({
+        host: 'localhost',
+        port: 2525,
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
 
-      res.status(200).json({ message: 'Order placed and confirmation email sent successfully!' });
+      const mailOptions = {
+        from: '"Web Project" <webprojectplaytech@example.com>',
+        to: email,
+        subject: 'Order Confirmation',
+        text: `Your order has been placed successfully. Details: ${JSON.stringify(orderProducts)}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error sending order confirmation email:', error);
+        } else {
+          console.log('Order confirmation email sent:', info.response);
+        }
+      });
+
+      res.status(200).json({ message: 'Order placed successfully' });
     } catch (error) {
-      console.error('Error processing order:', error);
+      console.error(error);
       res.status(500).json({ error: 'Failed to place order' });
     } finally {
       await prisma.$disconnect();

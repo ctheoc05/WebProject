@@ -1,13 +1,13 @@
+// next.config.js
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
+
 module.exports = {
-    //... other configurations ...
-    webpack: (config, { isServer }) => {
-      if (!isServer) {
-        config.resolve.fallback = {
-          tls: false,
-          net: false,
-          fs: false,
-        };
-      }
-      return config;
-    },
-  };
+  // Next.js configuration options
+  env: {
+    SMTP_USER: process.env.SMTP_USER,
+    SMTP_PASS: process.env.SMTP_PASS,
+  },
+};
