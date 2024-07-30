@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { sendOrderConfirmationEmail } from '../../utils/sendEmail';
 
 const prisma = new PrismaClient();
 
@@ -16,8 +17,6 @@ export default async function handler(req, res) {
         data: {
           OrderDate: new Date(),
           Email: email,
-       
-          
         },
       });
 
@@ -40,16 +39,18 @@ export default async function handler(req, res) {
         OrderID: order.OrderID,
         ProductID: product.ProductID,
         Quantity: product.quantity,
-       
       }));
 
       await prisma.orderProduct.createMany({
         data: orderProducts,
       });
 
-      res.status(200).json({ message: 'Order placed successfully' });
+      // Send confirmation email
+      await sendOrderConfirmationEmail(email, { cart, deliveryAddress, paymentMethod });
+
+      res.status(200).json({ message: 'Order placed and confirmation email sent successfully!' });
     } catch (error) {
-      console.error(error);
+      console.error('Error processing order:', error);
       res.status(500).json({ error: 'Failed to place order' });
     } finally {
       await prisma.$disconnect();
