@@ -235,6 +235,8 @@ export default function Account() {
                   <li><a href="#" onClick={() => setActiveSection('addresses')}>Address Book</a></li>
                   <li><a href="#" onClick={() => setActiveSection('orders')}>Order History</a></li>
                   <li><a href="#" onClick={() => setActiveSection('security')}>Account Security</a></li>
+                  <li><a href="#" onClick={() => setActiveSection('logout')}>Logout</a></li>
+
                 </ul>
               </nav>
             </aside>
@@ -297,7 +299,6 @@ export default function Account() {
                     </div>
                     <button className="submit" type="submit">Save</button>
                   </form>
-                  <button className="logout-button" onClick={redirectToLogout}>Logout</button>
                 </section>
               )}
               {activeSection === 'addresses' && (
@@ -358,6 +359,15 @@ export default function Account() {
                   </form>
                 </section>
               )}
+
+              {activeSection === 'logout' && (
+                <section id="logout" className=".button-container">
+                    <h1 className="form-heading">Are you sure you want to logout?</h1>
+                  <button className="logout-button" onClick={redirectToLogout}>Logout</button>
+                </section>
+              )}
+
+
             </main>
           </div>
         ) : (
@@ -454,6 +464,7 @@ export default function Account() {
           flex-direction: column;
         }
         .account-section {
+        
           width: 100%;
           max-width: 800px;
           margin-bottom: 40px;
@@ -514,11 +525,17 @@ export default function Account() {
           background-color: #28a745;
           color: white;
         }
+          .button-container{
+          display:felx;
+        justify-content:center;
+        align-items: center;
+        height:100vh;
+          }
         .logout-button {
           background-color: #dc3545;
           color: white;
           border: none;
-          padding: 10px 20px;
+          padding: 10px 200px;
           border-radius: 4px;
           cursor: pointer;
         }

@@ -9,7 +9,7 @@ export default function Home() {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    document.title='Home';
+    document.title = 'Home';
     async function fetchProducts() {
       try {
         const response = await fetch('/api/products');
@@ -77,7 +77,7 @@ export default function Home() {
       //   alert('Item added to wishlist.');
       // } else {
       //   const errorData = await response.json();
-      //   alert(`Error adding item to wishlist: ${errorData.message}`);
+      //   alert(Error adding item to wishlist: ${errorData.message});
       // }
     } catch (error) {
       alert('Error adding item to wishlist.');
@@ -85,62 +85,86 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex">
       <Navbar />
-      <div className="pt-20">
-        <div className="relative w-full h-64 bg-cover bg-center" style={{ backgroundImage: "url('/wow.png')" }}>
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <h1 className="text-white text-4xl font-bold">Welcome to Our E-Shop</h1>
+      <div className="flex-1 flex">
+        <aside className="w-64 bg-white shadow-md p-4 mt-16">
+          <h2 className="text-lg font-semibold mb-4">Filter by Category</h2>
+          <ul className="space-y-2">
+            <li>
+              <button
+                onClick={() => setCategory('All')}
+                className={`block w-full text-left p-2 ${category === 'All' ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'}`}
+              >
+                All
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setCategory('Rings')}
+                className={`block w-full text-left p-2 ${category === 'Rings' ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'}`}
+              >
+                Rings
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setCategory('Earrings')}
+                className={`block w-full text-left p-2 ${category === 'Earrings' ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'}`}
+              >
+                Earrings
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setCategory('Necklaces')}
+                className={`block w-full text-left p-2 ${category === 'Necklaces' ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'}`}
+              >
+                Necklaces
+              </button>
+            </li>
+          </ul>
+        </aside>
+        <main className="flex-1 p-6">
+          <div className="relative w-full h-64 bg-cover bg-center" style={{ backgroundImage: "url('/wow.png')" }}>
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <h1 className="text-white text-4xl font-bold">Welcome to Our E-Shop</h1>
+            </div>
           </div>
-        </div>
 
-        {email && (
-          <div className="text-center mt-4">
-            <h2 className="text-2xl font-semibold">Welcome, {username}!</h2>
-          </div>
-        )}
+          {email && (
+            <div className="text-center mt-4">
+              <h2 className="text-2xl font-semibold">Welcome, {username}!</h2>
+            </div>
+          )}
 
-        <div className="container mx-auto py-8">
-          <div className="mb-8">
-            <label htmlFor="category" className="block mb-2 text-lg font-medium text-gray-700">Filter by Category:</label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="block w-1/3 p-2 border border-gray-300 rounded-md"
-            >
-              <option value="All">All</option>
-              <option value="Women">Women</option>
-              <option value="Men">Men</option>
-              <option value="Kids">Kids</option>
-            </select>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map(product => (
-              <div key={product.ProductID} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <img src={product.ImageURL} alt={product.Name} className="w-full h-48 object-cover"/>
-                <div className="p-4">
-                  <h2 className="text-xl font-bold">{product.Name}</h2>
-                  <p className="text-gray-600">Category: {product.Category}</p>
-                  <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={() => handleAddToWishlist(product)}
-                    className="mt-4 ml-2 bg-white text-gray-800 py-2 px-4 rounded hover:bg-gray-200"
-                  >
-                    ❤️
-                  </button>
+          <div className="container mx-auto py-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProducts.map(product => (
+                <div key={product.ProductID} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <img src={product.ImageURL} alt={product.Name} className="w-full h-48 object-cover"/>
+                  <div className="p-4">
+                    <h2 className="text-xl font-bold">{product.Name}</h2>
+                    <p className="text-gray-600">Category: {product.Category}</p>
+                    <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      onClick={() => handleAddToWishlist(product)}
+                      className="mt-4 ml-2 bg-white text-gray-800 py-2 px-4 rounded hover:bg-gray-200"
+                    >
+                      ❤️
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
