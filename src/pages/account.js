@@ -117,14 +117,21 @@ export default function Account() {
     }
   };
 
+
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    // Check if the new username already exists
+  
+
+    const {  gender, ...updateData } = formData; // Remove email and gender
+
     const response = await fetch('/api/updateUser', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(updateData),
     });
 
     const result = await response.json();
@@ -167,6 +174,7 @@ export default function Account() {
         setCurrentPassword('');
         setNewPassword('');
         setError('');
+        router.push('/cart');
       } else {
         setError(result.message);
       }
@@ -288,15 +296,7 @@ export default function Account() {
                       <label>Username</label>
                       <input type="text" name="username" value={formData.username} onChange={handleChange} required />
                     </div>
-                    <div className="form-group">
-                      <label>Gender</label>
-                      <select name="gender" value={formData.gender} onChange={handleChange} required>
-                        <option value="">Select</option>
-                        <option value="Female">Female</option>
-                        <option value="Male">Male</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
+                   
                     <button className="submit" type="submit">Save</button>
                   </form>
                 </section>

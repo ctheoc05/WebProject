@@ -1,14 +1,18 @@
+//pages/wishlist.js
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Navbar from "./components/Navbar";
 import "../app/globals.css";
+import { FaShoppingCart } from 'react-icons/fa';
 
 export default function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
   const [email, setEmail] = useState('');
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
-    document.title='Wishlist';
+    document.title = 'Wishlist';
     const storedEmail = localStorage.getItem('email');
     if (storedEmail) {
       setEmail(storedEmail);
@@ -69,6 +73,33 @@ export default function Wishlist() {
     }
   };
 
+  const handleAddToCart = (product) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingProductIndex = cart.findIndex(item => item.ProductID === product.ProductID);
+
+    const productToAdd = {
+      ProductID: product.ProductID,
+      Name: product.Products.Name,
+      ImageURL: product.Products.ImageURL,
+      Category: product.Products.Category,
+      RetailPrice: parseFloat(product.Products.RetailPrice),
+      quantity: 1
+    };
+
+    if (existingProductIndex !== -1) {
+      cart[existingProductIndex].quantity += 1;
+    } else {
+      cart.push(productToAdd);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const handleCheckout = () => {
+    router.push('/checkout');
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -97,10 +128,24 @@ export default function Wishlist() {
                       >
                         Remove
                       </button>
+                      <button 
+                        onClick={() => handleAddToCart(item)}
+                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mr-2 flex items-center"
+                      >
+                        <FaShoppingCart className="mr-2" /> Add to Cart
+                      </button>
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
+            <div className="flex justify-end mt-8">
+              <button 
+                onClick={handleCheckout}
+                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              >
+                Go to Checkout
+              </button>
             </div>
           </div>
         )}
