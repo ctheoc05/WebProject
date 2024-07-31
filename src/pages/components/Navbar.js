@@ -1,3 +1,4 @@
+//pages/components/Navbar
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaShoppingCart, FaHeart, FaUser } from 'react-icons/fa';

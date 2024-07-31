@@ -1,3 +1,4 @@
+//pages/api/wishlistGET
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

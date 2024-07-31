@@ -43,6 +43,7 @@ export default async function handler(req, res) {
         OrderID: order.OrderID,
         ProductID: product.ProductID,
         Quantity: product.quantity,
+        ProductName: product.Name
       }));
 
       await prisma.orderProduct.createMany({

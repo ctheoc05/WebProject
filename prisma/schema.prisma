@@ -30,11 +30,12 @@ model Delivery {
 }
 
 model OrderProduct {
-  OrderID   Int
-  ProductID Int
-  Quantity  Int
-  Orders    Orders   @relation(fields: [OrderID], references: [OrderID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Order__65370702")
-  Products  Products @relation(fields: [ProductID], references: [ProductID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Produ__662B2B3B")
+  OrderID     Int
+  ProductID   Int
+  Quantity    Int
+  ProductName String?  @db.NVarChar(100)
+  Orders      Orders   @relation(fields: [OrderID], references: [OrderID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Order__65370702")
+  Products    Products @relation(fields: [ProductID], references: [ProductID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Produ__662B2B3B")
 
   @@id([OrderID, ProductID], map: "PK__OrderPro__08D097C17991A3C4")
 }
