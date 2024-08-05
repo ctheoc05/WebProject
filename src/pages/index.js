@@ -100,7 +100,7 @@ export default function Home() {
           if (cart[existingProductIndex].quantity < product.QtyInStock) {
               cart[existingProductIndex].quantity += 1;
           } else {
-              setNotification(`Cannot add more of ${product.Name}. Only ${product.QtyInStock} left in stock.`);
+              setNotification(`Cannot add more of ${product.Name}`);
               setTimeout(() => setNotification(null), 3000);
               return;
           }
@@ -257,7 +257,7 @@ export default function Home() {
                     <p className="text-gray-600">Category: {product.Category}</p>
                     <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
                     <p className={`text-sm ${product.QtyInStock <= 0 ? 'text-red-500' : 'text-gray-600'}`}>
-                        {product.QtyInStock <= 0 ? 'Out of Stock' : `In Stock: ${product.QtyInStock}`}
+                        {product.QtyInStock <= 0 ? 'Out of Stock' : ` ${product.QtyInStock} left. Hurry up!`}
                     </p>
                     <div className="flex items-center mt-2">
                         <button
