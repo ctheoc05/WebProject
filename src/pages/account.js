@@ -510,6 +510,8 @@ export default function Account() {
           width: 48%;
           padding: 10px;
           border: none;
+          background-color: green;
+          color: white;
           border-radius: 4px;
           cursor: pointer;
         }
