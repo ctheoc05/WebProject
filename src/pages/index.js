@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 import Navbar from "./components/Navbar";
 import "../app/globals.css";
 
 export default function Home() {
-  const router = useRouter();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [category, setCategory] = useState('All');
@@ -98,13 +96,8 @@ export default function Home() {
   };
 
   const handleClearFilters = () => {
-    setCategory('All');
     setPriceSort('None');
     setFilteredProducts([...products]); // Reset to original order
-  };
-
-  const handleImageClick = (productID) => {
-    router.push(`/product/${productID}`);
   };
 
   return (
@@ -189,15 +182,10 @@ export default function Home() {
           )}
 
           <div className="container mx-auto py-8">
-            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-7 gap-6">
               {filteredProducts.map(product => (
                 <div key={product.ProductID} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img 
-                    src={product.ImageURL} 
-                    alt={product.Name} 
-                    className="w-full h-48 object-cover cursor-pointer"
-                    onClick={() => handleImageClick(product.ProductID)}
-                  />
+                  <img src={product.ImageURL} alt={product.Name} className="w-full h-48 object-cover"/>
                   <div className="p-4">
                     <h2 className="text-xl font-bold">{product.Name}</h2>
                     <p className="text-gray-600">Category: {product.Category}</p>
