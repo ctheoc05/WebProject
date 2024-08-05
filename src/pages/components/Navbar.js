@@ -1,16 +1,18 @@
-//pages/components/Navbar
+// pages/components/Navbar.js
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { FaBars, FaTimes, FaShoppingCart, FaHeart, FaUser } from 'react-icons/fa';
+import CartDrawer from './CartDrawer';
 
 const Navbar = () => {
   const [nav, setNav] = useState(false);
   const [scroll, setScroll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const links = [
-    { id: 3, link: '', href: '/account', icon: <FaUser size={20} /> }, // Replaced "Account" text with FaUser icon
+    { id: 3, link: '', href: '/account', icon: <FaUser size={20} /> },
     { id: 4, link: '', href: '/wishlist', icon: <FaHeart size={20} /> },
   ];
 
@@ -28,13 +30,9 @@ const Navbar = () => {
       }
     };
 
-    // Initial cart count update
     updateCartCount();
-
-    // Listen for storage changes
     window.addEventListener('storage', updateCartCount);
 
-    // Check if the user is logged in
     if (typeof window !== 'undefined') {
       const username = localStorage.getItem('username');
       if (username) {
@@ -50,9 +48,9 @@ const Navbar = () => {
     };
   }, []);
 
-  // const redirectToLogout = () => {
-  //   window.location.href = '/api/logout';
-  // };
+  const handleCartToggle = () => {
+    setIsCartOpen(!isCartOpen);
+  };
 
   return (
     <div className={`flex justify-between items-center w-full h-20 px-4 text-black bg-white fixed top-0 z-50 transition-all duration-300 ${scroll ? 'shadow-lg bg-opacity-90' : 'bg-opacity-100'}`}>
@@ -61,10 +59,9 @@ const Navbar = () => {
           <Link href="/" legacyBehavior>
             <a className="link-black">
               <img
-              src="/654073.png"
-              alt="Logo"
-              className="w-10 md:w-15 lg:20 h-auto"
-              
+                src="/654073.png"
+                alt="Logo"
+                className="w-10 md:w-15 lg:w-10 h-auto"
               />
             </a>
           </Link>
@@ -81,18 +78,11 @@ const Navbar = () => {
             </Link>
           </li>
         ))}
-        {/* {isLoggedIn && (
-          <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 ">
-            <button onClick={redirectToLogout}>Logout</button>
-          </li>
-        )} */}
         <li className="nav-links px-4 cursor-pointer capitalize font-medium text-gray-500 hover:scale-105 hover:text-black duration-200 flex items-center">
-          <Link href="/cart" legacyBehavior>
-            <a className="flex items-center">
-              <FaShoppingCart size={20} />
-              <span className="ml-2">({cartCount})</span>
-            </a>
-          </Link>
+          <button onClick={handleCartToggle} className="relative flex items-center">
+            <FaShoppingCart size={20} />
+            <span className="ml-2">({cartCount})</span>
+          </button>
         </li>
       </ul>
 
@@ -111,20 +101,17 @@ const Navbar = () => {
               </Link>
             </li>
           ))}
-          {/* {isLoggedIn && (
-            <li className="px-4 cursor-pointer capitalize py-6 text-2xl">
-              <button onClick={redirectToLogout}>Logout</button>
-            </li>
-          )} */}
           <li className="px-4 cursor-pointer capitalize py-6 text-2xl">
-            <Link href="/cart" legacyBehavior>
-              <a onClick={() => setNav(!nav)} className="flex items-center">
-                <FaShoppingCart size={30} />
-                <span className="ml-2">({cartCount})</span>
-              </a>
-            </Link>
+            <button onClick={handleCartToggle} className="flex items-center">
+              <FaShoppingCart size={30} />
+              <span className="ml-2">({cartCount})</span>
+            </button>
           </li>
         </ul>
+      )}
+
+      {isCartOpen && (
+        <CartDrawer onClose={handleCartToggle} />
       )}
     </div>
   );

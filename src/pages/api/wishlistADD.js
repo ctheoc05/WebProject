@@ -1,13 +1,12 @@
-//pages/api/wishlistADD
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const { email, username, productId, quantity } = req.body;
+        const { email, username, productId } = req.body;
 
-        if (!email || !username || !productId || quantity === undefined) {
+        if (!email || !username || !productId) {
             return res.status(400).json({ error: 'Missing required fields.' });
         }
 
@@ -21,24 +20,21 @@ export default async function handler(req, res) {
             });
 
             if (existingItem) {
-                // Update the quantity if the item already exists
-                const updatedItem = await prisma.wishlist.update({
+                // Remove the item if it already exists
+                await prisma.wishlist.delete({
                     where: {
                         WishlistID: existingItem.WishlistID,
                     },
-                    data: {
-                        Quantity: existingItem.Quantity + quantity,
-                    },
                 });
-                res.status(200).json(updatedItem);
+                res.status(200).json({ message: 'Item removed from wishlist.' });
             } else {
-                // Add a new item to the wishlist
+                // Add a new item to the wishlist with quantity 1
                 const newItem = await prisma.wishlist.create({
                     data: {
                         Email: email,
                         Username: username,
                         ProductID: productId,
-                        Quantity: quantity,
+                        Quantity: 1,
                     },
                     include: {
                       Products: true,
@@ -48,7 +44,7 @@ export default async function handler(req, res) {
             }
         } catch (error) {
             console.error('Error in wishlistADD handler:', error);
-            res.status(500).json({ error: 'Error adding item to wishlist.' });
+            res.status(500).json({ error: 'Error adding/removing item in wishlist.' });
         }
     } else {
         res.status(405).json({ error: 'Method not allowed.' });

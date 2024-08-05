@@ -4,8 +4,8 @@ export default async function handle(req, res) {
     console.log('received request to /api/products');
 
     try {
-        console.log('prisma client:', prisma);
-        console.log('prisma product model:', prisma.Products);
+        // console.log('prisma client:', prisma);
+        // console.log('prisma product model:', prisma.Products);
 
         const products = await prisma.products.findMany({
             select: {
@@ -15,6 +15,7 @@ export default async function handle(req, res) {
                 RetailPrice: true,
                 QtyInStock: true,
                 ImageURL: true, // Ensure this field is selected
+                Description:true,
             },
         });
 

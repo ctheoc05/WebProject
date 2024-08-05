@@ -108,8 +108,8 @@ export default function Account() {
 
     const result = await response.json();
     if (response.ok) {
-      localStorage.setItem('email', result.email);
-      setIsLoggedIn(true);
+      // localStorage.setItem('email', result.email);
+      setIsLoggedIn(false);
       setIsLoginPrompt(false);
       router.push('/accountlogin');
     } else {
@@ -504,7 +504,7 @@ export default function Account() {
           display: flex;
           justify-content: space-between;
         }
-        .submit,
+        .submit-button,
         .login-button,
         .submit {
           width: 48%;
@@ -513,7 +513,7 @@ export default function Account() {
           border-radius: 4px;
           cursor: pointer;
         }
-        .submit {
+        .submit-button {
           background-color: #4caf50;
           color: white;
         }
@@ -529,7 +529,7 @@ export default function Account() {
           display:felx;
         justify-content:center;
         align-items: center;
-        height:100vh;
+        height:10vh;
           }
         .logout-button {
           background-color: #dc3545;

@@ -12,9 +12,9 @@
     useEffect(() => {
       // Check if user is already logged in
       const storedEmail = localStorage.getItem('email');
-      if (storedEmail) {
-        setIsLoggedIn(true);
-        Router.push('/'); // Redirect to the homepage if logged in
+      if (!storedEmail) {
+        setIsLoggedIn(false);
+        // Redirect to the homepage if logged in
       }
     }, []);
 
@@ -44,6 +44,12 @@
         setMessage(result.message);
       }
     };
+
+    useEffect(()=>{
+      if(isLoggedIn){
+        Router.push('/');
+      }
+    },[isLoggedIn]);
     
     //if logged in already show message
     if (isLoggedIn) {

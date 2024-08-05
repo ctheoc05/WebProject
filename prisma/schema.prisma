@@ -69,6 +69,7 @@ model Products {
   RetailPrice  Decimal        @db.Decimal(10, 2)
   QtyInStock   Int
   ImageURL     String?
+  Description  String?        @db.NVarChar(255)
   OrderProduct OrderProduct[]
   Orders       Orders[]
   Wishlist     Wishlist[]
@@ -91,7 +92,6 @@ model Users {
   LastName     String?    @db.VarChar(50)
   Gender       String?    @db.VarChar(3)
   Username     String?    @db.VarChar(30) @unique
-
   Password     String?    @db.NVarChar(255)
   AgreeToTerms Boolean?
   Orders       Orders[]
