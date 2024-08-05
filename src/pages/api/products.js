@@ -1,7 +1,7 @@
 import prisma from "../../../lib/prisma";
 
 export default async function handle(req, res) {
-    console.log('received request to /api/products');
+    // console.log('received request to /api/products');
 
     try {
         // console.log('prisma client:', prisma);
@@ -19,7 +19,7 @@ export default async function handle(req, res) {
             },
         });
 
-        console.log('fetched products: ', products);
+        // console.log('fetched products: ', products);
         res.status(200).json(products);
     } catch (error) {
         console.log('there is an error in products');
