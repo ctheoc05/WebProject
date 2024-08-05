@@ -1,5 +1,5 @@
+// pages/api/checkout.js
 import { PrismaClient } from '@prisma/client';
-// import { sendOrderConfirmationEmail } from '../../utils/sendEmail';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const totalAmount= cart.reduce((total,product) => total+ (product.RetailPrice * product.quantity),0);
+    const totalAmount = cart.reduce((total, product) => total + (product.RetailPrice * product.quantity), 0);
 
     try {
       // Create the order
@@ -20,7 +20,6 @@ export default async function handler(req, res) {
           OrderDate: new Date(),
           Email: email,
           totalAmount: totalAmount,
-          
         },
       });
 
@@ -50,8 +49,21 @@ export default async function handler(req, res) {
         data: orderProducts,
       });
 
-      // Send confirmation email
-      // await sendOrderConfirmationEmail(email, { cart, deliveryAddress, paymentMethod });
+      // Update stock quantities
+      for (const product of cart) {
+        const productInStock = await prisma.products.findUnique({
+          where: { ProductID: product.ProductID }
+        });
+
+        if (productInStock && productInStock.QtyInStock < product.quantity) {
+          throw new Error(`Not enough stock for product ID ${product.ProductID}`);
+        }
+
+        await prisma.products.update({
+          where: { ProductID: product.ProductID },
+          data: { QtyInStock: { decrement: product.quantity } },
+        });
+      }
 
       res.status(200).json({ message: 'Order placed and confirmation email sent successfully!' });
     } catch (error) {

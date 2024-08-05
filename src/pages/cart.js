@@ -1,3 +1,4 @@
+//pages/cart.js
 import { useState, useEffect } from 'react';
 import Navbar from "./components/Navbar";
 import "../app/globals.css";

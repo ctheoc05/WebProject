@@ -82,29 +82,42 @@ export default function Home() {
 
         setFilteredProducts(result);
     }, [category, priceSort, products]);
-
     const handleAddToCart = (product) => {
-        const storedCart = localStorage.getItem('cart');
-        let cart = storedCart ? JSON.parse(storedCart) : [];
-
-        const existingProductIndex = cart.findIndex(item => item.ProductID === product.ProductID);
-
-        if (existingProductIndex !== -1) {
-            cart[existingProductIndex].quantity += 1;
-        } else {
-            cart.push({ ...product, quantity: 1 });
-        }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-
-        // Trigger a storage event to update cart count in Navbar
-        const event = new Event('storage');
-        window.dispatchEvent(event);
-
-        // Show notification
-        setNotification(`Added ${product.Name} to cart`);
-        setTimeout(() => setNotification(null), 3000);
-    };
+      // Check if the product is in stock
+      if (product.QtyInStock <= 0) {
+          // Show out-of-stock notification
+          setNotification(`Sorry, ${product.Name} is out of stock.`);
+          setTimeout(() => setNotification(null), 3000);
+          return;
+      }
+  
+      const storedCart = localStorage.getItem('cart');
+      let cart = storedCart ? JSON.parse(storedCart) : [];
+  
+      const existingProductIndex = cart.findIndex(item => item.ProductID === product.ProductID);
+  
+      if (existingProductIndex !== -1) {
+          if (cart[existingProductIndex].quantity < product.QtyInStock) {
+              cart[existingProductIndex].quantity += 1;
+          } else {
+              setNotification(`Cannot add more of ${product.Name}. Only ${product.QtyInStock} left in stock.`);
+              setTimeout(() => setNotification(null), 3000);
+              return;
+          }
+      } else {
+          cart.push({ ...product, quantity: 1 });
+      }
+  
+      localStorage.setItem('cart', JSON.stringify(cart));
+  
+      // Trigger a storage event to update cart count in Navbar
+      const event = new Event('storage');
+      window.dispatchEvent(event);
+  
+      // Show success notification
+      setNotification(`Added ${product.Name} to cart`);
+      setTimeout(() => setNotification(null), 3000);
+  };
 
     const handleAddRemoveWishlist = async (product) => {
         const email = localStorage.getItem('email');
@@ -234,37 +247,40 @@ export default function Home() {
                             <h2 className="text-2xl font-semibold">Welcome, {username}!</h2>
                         </div>
                     )}
-
-                    <div className="container mx-auto py-8">
-                        <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
-                            {filteredProducts.map(product => (
-                                <div key={product.ProductID} className="bg-white rounded-lg shadow-md overflow-hidden">
-                                    <img src={product.ImageURL} alt={product.Name} className="w-full h-48 object-cover"/>
-                                    <div className="p-4">
-                                        <h2 className="text-xl font-bold">{product.Name}</h2>
-                                        <p className="text-gray-600">Category: {product.Category}</p>
-                                        <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
-                                        <div className="flex items-center mt-2">
-                                            <button
-                                                onClick={() => handleAddToCart(product)}
-                                                className="flex items-center bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600"
-                                            >
-                                                <FaShoppingCart className="mr-2" />
-                                                Add to Cart
-                                            </button>
-                                            <button
-                                                onClick={() => handleAddRemoveWishlist(product)}
-                                                className={`ml-2 flex items-center py-2 px-2 rounded ${wishlist.includes(product.ProductID) ? 'bg-white-500 text-white' : 'bg-whute text-gray-800'} hover:bg-gray-200`}
-                                            >
-                                                <FaHeart className={`mr-2 ${wishlist.includes(product.ProductID) ? 'text-red-500' : 'text-wite-800'}`} />
-                                                {wishlist.includes(product.ProductID)}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+<div className="container mx-auto py-8">
+    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-3">
+        {filteredProducts.map(product => (
+            <div key={product.ProductID} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <img src={product.ImageURL} alt={product.Name} className="w-full h-32 object-cover"/>
+                <div className="p-4">
+                    <h2 className="text-xl font-bold">{product.Name}</h2>
+                    <p className="text-gray-600">Category: {product.Category}</p>
+                    <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
+                    <p className={`text-sm ${product.QtyInStock <= 0 ? 'text-red-500' : 'text-gray-600'}`}>
+                        {product.QtyInStock <= 0 ? 'Out of Stock' : `In Stock: ${product.QtyInStock}`}
+                    </p>
+                    <div className="flex items-center mt-2">
+                        <button
+                            onClick={() => handleAddToCart(product)}
+                            className={`flex items-center bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600 ${product.QtyInStock <= 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+                            disabled={product.QtyInStock <= 0}
+                        >
+                            <FaShoppingCart className="mr-2" />
+                            Add to Cart
+                        </button>
+                        <button
+                            onClick={() => handleAddRemoveWishlist(product)}
+                            className={`ml-2 flex items-center py-2 px-2 rounded ${wishlist.includes(product.ProductID) ? 'bg-white-500 text-white' : 'bg-white text-gray-800'} hover:bg-gray-200`}
+                        >
+                            <FaHeart className={`mr-2 ${wishlist.includes(product.ProductID) ? 'text-red-500' : 'text-gray-800'}`} />
+                            {wishlist.includes(product.ProductID)}
+                        </button>
                     </div>
+                </div>
+            </div>
+        ))}
+    </div>
+</div>
                 </main>
             </div>
             {notification && <Notification message={notification} onClose={() => setNotification(null)} />}
