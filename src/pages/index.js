@@ -254,7 +254,7 @@ export default function Home() {
                     )}
 
                     <div className="container mx-auto py-8">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                             {filteredProducts.map(product => (
                                 <div key={product.ProductID} className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105">
                                     <img 
@@ -272,7 +272,7 @@ export default function Home() {
                                         <div className="flex items-center space-x-2">
                                             <button
                                                 onClick={() => handleAddToCart(product)}
-                                                className={`flex items-center bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600 transition-colors duration-300 ${product.QtyInStock <= 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+                                                className={`flex items-center bg-blue-500 text-white py-1 px-1 rounded hover:bg-blue-600 transition-colors duration-300 ${product.QtyInStock <= 0 ? 'cursor-not-allowed opacity-50' : ''}`}
                                                 disabled={product.QtyInStock <= 0}
                                             >
                                                 <FaShoppingCart className="mr-2" />
@@ -280,7 +280,7 @@ export default function Home() {
                                             </button>
                                             <button
                                                 onClick={() => handleAddRemoveWishlist(product)}
-                                                className={`flex items-center py-2 px-2 rounded transition-colors duration-300 ${wishlist.includes(product.ProductID) ? 'bg-white-500 text-white' : 'bg-white text-gray-800 hover:bg-gray-100'}`}
+                                                className={`flex items-center py-1 px-1 rounded transition-colors duration-300 ${wishlist.includes(product.ProductID) ? 'bg-white-500 text-white' : 'bg-white text-gray-800 hover:bg-gray-100'}`}
                                             >
                                                 <FaHeart className={`mr-2 ${wishlist.includes(product.ProductID) ? 'text-red-500' : 'text-gray-800'}`} />
                                                 {wishlist.includes(product.ProductID)}
@@ -305,7 +305,7 @@ export default function Home() {
                             &times;
                         </button>
                         <h2 className="text-2xl font-bold mb-4">{selectedProduct.Name}</h2>
-                        <img src={selectedProduct.ImageURL} alt={selectedProduct.Name} className="w-full h-60 object-cover mb-4"/>
+                        <img src={selectedProduct.ImageURL} alt={selectedProduct.Name} className="w-full h-10 object-cover mb-4"/>
                         <p className="text-gray-700 mb-4">{selectedProduct.Description}</p>
                         <p className="text-gray-800 font-semibold mb-2">Price: ${selectedProduct.RetailPrice}</p>
                         <p className={`text-sm ${selectedProduct.QtyInStock <= 0 ? 'text-red-500' : 'text-gray-600'}`}>
@@ -314,7 +314,7 @@ export default function Home() {
                         <div className="flex items-center space-x-2">
                             <button
                                 onClick={() => handleAddToCart(selectedProduct)}
-                                className={`flex items-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300 ${selectedProduct.QtyInStock <= 0 ? 'cursor-not-allowed opacity-50' : ''}`}
+                                className={`flex items-center bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600 transition-colors duration-300 ${selectedProduct.QtyInStock <= 0 ? 'cursor-not-allowed opacity-50' : ''}`}
                                 disabled={selectedProduct.QtyInStock <= 0}
                             >
                                 <FaShoppingCart className="mr-2" />
@@ -322,7 +322,7 @@ export default function Home() {
                             </button>
                             <button
                                 onClick={() => handleAddRemoveWishlist(selectedProduct)}
-                                className={`flex items-center py-2 px-4 rounded transition-colors duration-300 ${wishlist.includes(selectedProduct.ProductID) ? 'bg-white-500 text-white' : 'bg-white text-gray-800 hover:bg-gray-100'}`}
+                                className={`flex items-center py-2 px-2 rounded transition-colors duration-300 ${wishlist.includes(selectedProduct.ProductID) ? 'bg-white-500 text-white' : 'bg-white text-gray-800 hover:bg-gray-100'}`}
                             >
                                 <FaHeart className={`mr-2 ${wishlist.includes(selectedProduct.ProductID) ? 'text-red-500' : 'text-gray-800'}`} />
                                 {wishlist.includes(selectedProduct.ProductID) }
