@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Navbar from "./components/Navbar";
 import "../app/globals.css";
+import { FaShoppingCart, FaHeart } from 'react-icons/fa';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -9,6 +10,7 @@ export default function Home() {
   const [priceSort, setPriceSort] = useState('None');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [wishlist, setWishlist] = useState([]); // Track wishlist items
 
   useEffect(() => {
     document.title = 'Home';
@@ -35,11 +37,27 @@ export default function Home() {
     if (storedUsername) {
       setUsername(storedUsername);
     }
+
+    async function fetchWishlist() {
+      if (storedEmail) {
+        try {
+          const response = await fetch(`/api/wishlistGET?email=${storedEmail}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch wishlist');
+          }
+          const data = await response.json();
+          setWishlist(data.map(item => item.ProductID)); // Track product IDs in the wishlist
+        } catch (error) {
+          console.error('Error fetching wishlist:', error);
+        }
+      }
+    }
+    fetchWishlist();
   }, []);
 
   useEffect(() => {
     let result = [...products]; // Make a copy of the original product list
-    
+
     if (category !== 'All') {
       result = result.filter(product => product.Category === category);
     }
@@ -72,31 +90,49 @@ export default function Home() {
     window.dispatchEvent(event);
   };
 
-  const handleAddToWishlist = async (product, quantity = 1) => {
+  const handleAddRemoveWishlist = async (product) => {
     const email = localStorage.getItem('email');
     const username = localStorage.getItem('username');
 
     if (!email || !username) {
-      alert('You must be logged in to add items to your wishlist.');
+      alert('You must be logged in to add or remove items from your wishlist.');
       return;
     }
 
-    try {
-      const response = await fetch('/api/wishlistADD', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, username, productId: product.ProductID, quantity }),
-      });
-
-    } catch (error) {
-      alert('Error adding item to wishlist.');
+    if (wishlist.includes(product.ProductID)) {
+      // Remove from wishlist
+      try {
+        await fetch('/api/wishlistREMOVE', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, productID: product.ProductID }),
+        });
+        setWishlist(prev => prev.filter(id => id !== product.ProductID)); // Remove from local wishlist state
+      } catch (error) {
+        alert('Error removing item from wishlist.');
+      }
+    } else {
+      // Add to wishlist
+      try {
+        await fetch('/api/wishlistADD', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, username, productId: product.ProductID, quantity: 1 }),
+        });
+        setWishlist(prev => [...prev, product.ProductID]); // Add to local wishlist state
+      } catch (error) {
+        alert('Error adding item to wishlist.');
+      }
     }
   };
 
   const handleClearFilters = () => {
     setPriceSort('None');
+    setCategory('All');
     setFilteredProducts([...products]); // Reset to original order
   };
 
@@ -182,7 +218,7 @@ export default function Home() {
           )}
 
           <div className="container mx-auto py-8">
-            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-7 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
               {filteredProducts.map(product => (
                 <div key={product.ProductID} className="bg-white rounded-lg shadow-md overflow-hidden">
                   <img src={product.ImageURL} alt={product.Name} className="w-full h-48 object-cover"/>
@@ -190,18 +226,22 @@ export default function Home() {
                     <h2 className="text-xl font-bold">{product.Name}</h2>
                     <p className="text-gray-600">Category: {product.Category}</p>
                     <p className="text-gray-800 font-semibold">Price: ${product.RetailPrice}</p>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="mt-2 bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600"
-                    >
-                      Add to Cart
-                    </button>
-                    <button
-                      onClick={() => handleAddToWishlist(product)}
-                      className="mt-1 ml-1 bg-white text-gray-800 py-1 px-1 rounded hover:bg-gray-200"
-                    >
-                      ❤️
-                    </button>
+                    <div className="flex items-center mt-2">
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="flex items-center bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600"
+                      >
+                        <FaShoppingCart className="mr-2" />
+                        Add to Cart
+                      </button>
+                      <button
+                        onClick={() => handleAddRemoveWishlist(product)}
+                        className={`ml-2 flex items-center py-2 px-2 rounded ${wishlist.includes(product.ProductID) ? 'bg-red-500 text-white' : 'bg-white text-gray-800'} hover:bg-gray-200`}
+                      >
+                        <FaHeart className="mr-2" />
+                        {wishlist.includes(product.ProductID) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
