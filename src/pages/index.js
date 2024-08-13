@@ -305,7 +305,7 @@ export default function Home() {
                             &times;
                         </button>
                         <h2 className="text-2xl font-bold mb-4">{selectedProduct.Name}</h2>
-                        <img src={selectedProduct.ImageURL} alt={selectedProduct.Name} className="w-full h-10 object-cover mb-4"/>
+                        <img src={selectedProduct.ImageURL} alt={selectedProduct.Name} className="w-full h-80 object-cover mb-4"/>
                         <p className="text-gray-700 mb-4">{selectedProduct.Description}</p>
                         <p className="text-gray-800 font-semibold mb-2">Price: ${selectedProduct.RetailPrice}</p>
                         <p className={`text-sm ${selectedProduct.QtyInStock <= 0 ? 'text-red-500' : 'text-gray-600'}`}>

@@ -34,6 +34,8 @@ export default function Account() {
   const [orders, setOrders] = useState([]);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
   const router = useRouter();
 
   useEffect(() => {
@@ -157,6 +159,12 @@ export default function Account() {
       return;
     }
 
+   
+if (newPassword !== confirmNewPassword) {
+  setError('New password and confirmation password do not match');
+  return;
+}
+
     try {
       const response = await fetch('/api/changePassword', {
         method: 'POST',
@@ -173,60 +181,21 @@ export default function Account() {
       if (response.ok) {
         setCurrentPassword('');
         setNewPassword('');
+        setConfirmNewPassword('');
         setError('');
         router.push('/cart');
       } else {
-        setError(result.message);
+        // Handle errors from the server
+        const result = await response.json();
+        setError(result.error || 'Failed to change password');
       }
     } catch (error) {
-      setError('An error occurred while changing the password.');
-    }
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const submissionData = {
-      email: formData.email,
-      password: formData.password,
-    };
-
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(submissionData),
-    });
-
-    const result = await response.json();
-    if (response.ok) {
-      localStorage.setItem('email', result.email);
-      setIsLoggedIn(true);
-      setIsLoginPrompt(false);
-      router.push('/account');
-    } else {
-      setError(result.message);
+      setError('Your current password is not right.');
     }
   };
 
   const redirectToLogout = () => {
     window.location.href = '/api/logout';
-  };
-
-  const handleAddAddress = () => {
-    // Logic to add a new address
-  };
-
-  const handleEditAddress = (id) => {
-    // Logic to edit an address
-  };
-
-  const handleDeleteAddress = (id) => {
-    setAddresses(addresses.filter(address => address.id !== id));
-  };
-
-  const handleSubmit = () => {
-    router.push('/account#');
   };
 
   return (
@@ -342,23 +311,44 @@ export default function Account() {
     </div>
   </section>
 )}
-              {activeSection === 'security' && (
-                <section id="security" className="account-section">
-                  <h2 className="form-heading">Account Security</h2>
-                  <form onSubmit={handleChangePassword} className="account-form">
-                    <div className="form-group">
-                      <label>Current Password</label>
-                      <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
-                    </div>
-                    <div className="form-group">
-                      <label>New Password</label>
-                      <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-                    </div>
-                    <button type="submit" className="submit">Change Password</button>
-                    {error && <div className="error">{error}</div>}
-                  </form>
-                </section>
-              )}
+            {activeSection === 'security' && (
+        <section id="security" className="account-section">
+          <h2 className="form-heading">Account Security</h2>
+          <form onSubmit={handleChangePassword} className="account-form">
+            <div className="form-group">
+              <label>Current Password</label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>New Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Confirm New Password</label>
+              <input
+                type="password"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="submit">Change Password</button>
+            {error && <div className="error">{error}</div>}
+          </form>
+
+          <h2>Danger Zone</h2>
+        </section>
+      )}
 
               {activeSection === 'logout' && (
                 <section id="logout" className=".button-container">
