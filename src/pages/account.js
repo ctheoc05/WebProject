@@ -85,6 +85,51 @@ export default function Account() {
     setOrders(data);
   };
 
+  const [addressFormData, setAddressFormData] = useState({
+    street: '',
+    city: '',
+    state: '',
+    zip: '',
+  });
+  
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddressFormData({
+      ...addressFormData,
+      [name]: value,
+    });
+  };
+  
+  const handleAddAddress = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await fetch('/api/addresses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(addressFormData),
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok) {
+        setAddresses([...addresses, result]);
+        setAddressFormData({
+          street: '',
+          city: '',
+          state: '',
+          zip: '',
+        });
+      } else {
+        setError(result.error || 'Failed to add address');
+      }
+    } catch (error) {
+      setError('An error occurred while adding the address');
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -270,21 +315,39 @@ if (newPassword !== confirmNewPassword) {
                   </form>
                 </section>
               )}
-              {activeSection === 'addresses' && (
-                <section id="addresses" className="account-section">
-                  <h2 className="form-heading">Address Book</h2>
-                  <button onClick={handleAddAddress}>Add Address</button>
-                  <ul>
-                    {addresses.map(address => (
-                      <li key={address.id}>
-                        {address.street}, {address.city}, {address.state}, {address.zip}
-                        <button onClick={() => handleEditAddress(address.id)}>Edit</button>
-                        <button onClick={() => handleDeleteAddress(address.id)}>Delete</button>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
+             {activeSection === 'addresses' && (
+  <section id="addresses" className="account-section">
+    <h2 className="form-heading">Address Book</h2>
+    <form onSubmit={handleAddAddress} className="account-form">
+      <div className="form-group">
+        <label>Street</label>
+        <input type="text" name="street" value={addressFormData.street} onChange={handleAddressChange} required />
+      </div>
+      <div className="form-group">
+        <label>City</label>
+        <input type="text" name="city" value={addressFormData.city} onChange={handleAddressChange} required />
+      </div>
+      <div className="form-group">
+        <label>State</label>
+        <input type="text" name="state" value={addressFormData.state} onChange={handleAddressChange} required />
+      </div>
+      <div className="form-group">
+        <label>Zip</label>
+        <input type="text" name="zip" value={addressFormData.zip} onChange={handleAddressChange} required />
+      </div>
+      <button type="submit" className="submit">Add Address</button>
+    </form>
+    <ul>
+      {addresses.map(address => (
+        <li key={address.id}>
+          {address.street}, {address.city}, {address.state}, {address.zip}
+          <button onClick={() => handleEditAddress(address.id)}>Edit</button>
+          <button onClick={() => handleDeleteAddress(address.id)}>Delete</button>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
             {activeSection === 'orders' && (
   <section id="orders" className="account-section">
     <h2 className="form-heading">Order History</h2>

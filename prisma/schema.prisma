@@ -7,17 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Customers {
-  CustomerID Int     @id(map: "PK_CustomersAnthia") @default(autoincrement())
-  FirstName  String  @db.NVarChar(50)
-  LastName   String  @db.NVarChar(50)
-  Address    String? @db.NVarChar(150)
-  City       String? @db.NVarChar(50)
-  State      String? @db.NVarChar(50)
-}
-
 model Delivery {
-  DeliveryID    Int    @id(map: "PK__Delivery__626D8FEE7E3C80DA") @default(autoincrement())
+  DeliveryID    Int    @id(map: "PK__Delivery__626D8FEE65857B99") @default(autoincrement())
   OrderID       Int
   FullName      String @db.NVarChar(255)
   Street        String @db.NVarChar(255)
@@ -37,61 +28,42 @@ model OrderProduct {
   Orders      Orders   @relation(fields: [OrderID], references: [OrderID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Order__65370702")
   Products    Products @relation(fields: [ProductID], references: [ProductID], onDelete: Cascade, onUpdate: NoAction, map: "FK__OrderProd__Produ__662B2B3B")
 
-  @@id([OrderID, ProductID], map: "PK__OrderPro__08D097C17991A3C4")
+  @@id([OrderID, ProductID], map: "PK__OrderPro__08D097C12B54A1B3")
 }
 
 model Orders {
-  OrderID      Int            @id(map: "PK__Orders__C3905BAF7CFAF49D") @default(autoincrement())
-  OrderDate    DateTime?      @default(now(), map: "DF__Orders__OrderDat__05A3D694") @db.DateTime
+  OrderID      Int            @id(map: "PK__Orders__C3905BAF696A0F37") @default(autoincrement())
+  OrderDate    DateTime?      @default(now(), map: "DF__Orders__OrderDat__3D5E1FD2") @db.DateTime
   ProductID    Int?
   Quantity     Int?
-  Email        String?        @db.VarChar(50)
+  UserID       Int?
   totalAmount  Float?
   Delivery     Delivery[]
   OrderProduct OrderProduct[]
   Products     Products?      @relation(fields: [ProductID], references: [ProductID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_Products")
-  Users        Users?         @relation(fields: [Email], references: [Email], onDelete: NoAction, onUpdate: NoAction, map: "FK_Orders_Users")
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model ProductCategories {
-  CategoryID           Int    @default(autoincrement())
-  CategoryName         String @db.VarChar(25)
-  CategoryAbbreviation String @db.Char(2)
-
-  @@ignore
+  Users        Users?         @relation(fields: [UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction, map: "FK__Orders__UserID__3E52440B")
 }
 
 model Products {
-  ProductID    Int            @id(map: "PK__Products__B40CC6ED63D7A053") @default(autoincrement())
+  ProductID    Int            @id(map: "PK__Products__B40CC6ED95FFA4F2") @default(autoincrement())
   Category     String         @db.NVarChar(50)
   Name         String         @db.NVarChar(100)
   RetailPrice  Decimal        @db.Decimal(10, 2)
   QtyInStock   Int
-  ImageURL     String?
+  ImageURL     String?        @db.NVarChar(255)
   Description  String?        @db.NVarChar(255)
   OrderProduct OrderProduct[]
   Orders       Orders[]
   Wishlist     Wishlist[]
 }
 
-model sysdiagrams {
-  name         String @db.NVarChar(128)
-  principal_id Int
-  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B6199E821FE") @default(autoincrement())
-  version      Int?
-  definition   Bytes?
-
-  @@unique([principal_id, name], map: "UK_principal_name")
-}
-
 model Users {
-  UserID       Int        @default(autoincrement())
-  Email        String     @id(map: "PK_Users") @db.VarChar(50) @unique
+  UserID       Int        @id(map: "PK__Users__1788CCACD5920D28") @default(autoincrement())
+  Email        String     @unique(map: "UQ__Users__A9D10534E1EBB666") @db.VarChar(50)
   FirstName    String?    @db.VarChar(50)
   LastName     String?    @db.VarChar(50)
   Gender       String?    @db.VarChar(3)
-  Username     String?    @db.VarChar(30) @unique
+  Username     String?    @unique(map: "UQ__Users__536C85E4A72F1B07") @db.VarChar(30)
   Password     String?    @db.NVarChar(255)
   AgreeToTerms Boolean?
   Orders       Orders[]
@@ -99,11 +71,10 @@ model Users {
 }
 
 model Wishlist {
-  WishlistID Int      @id(map: "PK__Wishlist__233189CB9086D5D8") @default(autoincrement())
-  Email      String   @db.VarChar(50)
-  Username   String   @db.VarChar(30)
+  WishlistID Int      @id(map: "PK__Wishlist__233189CB18B1C64E") @default(autoincrement())
+  UserID     Int
   ProductID  Int
-  Quantity   Int?     @default(1, map: "DF__Wishlist__Quanti__00DF2177")
+  Quantity   Int?     @default(1, map: "DF__Wishlist__Quanti__48CFD27E")
   Products   Products @relation(fields: [ProductID], references: [ProductID], onUpdate: NoAction, map: "FK_Wishlist_Products")
-  Users      Users    @relation(fields: [Email], references: [Email], onUpdate: NoAction, map: "FK_Wishlist_Users")
+  Users      Users    @relation(fields: [UserID], references: [UserID], onUpdate: NoAction, map: "FK__Wishlist__UserID__49C3F6B7")
 }

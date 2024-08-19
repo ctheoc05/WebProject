@@ -11,8 +11,17 @@ export default async function handler(req, res) {
   }
 
   try {
+
+    const user=await prisma.users.findUnique({
+      where: {Email:email},
+    });
+    
+    if(!user){
+      return res.status(404).json({error: 'user not found'});
+    }
+    
     const wishlistItems = await prisma.wishlist.findMany({
-      where: { Email: email },
+      where: { UserID: user.UserID },
       include: {
         Products: true, // Ensure related products are included
       },

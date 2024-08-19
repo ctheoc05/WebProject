@@ -36,22 +36,27 @@ export default function Wishlist() {
 
     fetchWishlistItems();
   }, [email]);
-
   const handleRemoveFromWishlist = async (productID) => {
     try {
-      await fetch('/api/wishlistREMOVE', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, productID }),
-      });
-      setWishlist(prev => prev.filter(item => item.ProductID !== productID));
-    } catch (error) {
-      setError('Error removing item from wishlist.');
-    }
-  };
+        const response = await fetch(`/api/wishlistREMOVE?email=${email}&productID=${productID}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to remove item from wishlist');
+        }
+
+        // Update the state to reflect the removal
+        setWishlist(prev => prev.filter(item => item.ProductID !== productID));
+    } catch (error) {
+        setError('Error removing item from wishlist.');
+        console.error('Error removing item from wishlist:', error);
+    }
+};
   const handleAddToCart = async (product) => {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingProductIndex = cart.findIndex(item => item.ProductID === product.ProductID);

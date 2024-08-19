@@ -4,17 +4,28 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const { email, username, productId } = req.body;
+        const { email, productId } = req.body;
 
-        if (!email || !username || !productId) {
+        if (!email || !productId) {
             return res.status(400).json({ error: 'Missing required fields.' });
         }
 
         try {
+            // Fetch the user to get UserID
+            const user = await prisma.users.findUnique({
+                where: { Email: email },
+            });
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found.' });
+            }
+
+            const userId = user.UserID;
+
             // Check if the item already exists in the wishlist
             const existingItem = await prisma.wishlist.findFirst({
                 where: {
-                    Email: email,
+                    UserID: userId,
                     ProductID: productId,
                 },
             });
@@ -31,14 +42,13 @@ export default async function handler(req, res) {
                 // Add a new item to the wishlist with quantity 1
                 const newItem = await prisma.wishlist.create({
                     data: {
-                        Email: email,
-                        Username: username,
+                        UserID: userId,
                         ProductID: productId,
                         Quantity: 1,
                     },
                     include: {
-                      Products: true,
-                    }
+                        Products: true, // Include related product details
+                    },
                 });
                 res.status(200).json(newItem);
             }
