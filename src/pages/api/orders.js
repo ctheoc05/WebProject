@@ -1,4 +1,3 @@
-//pages/api/orders
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -12,8 +11,19 @@ export default async function handler(req, res) {
     }
 
     try {
-      const orders = await prisma.orders.findMany({
+      // First, find the user by email
+      const user = await prisma.users.findUnique({
         where: { Email: email },
+        select: { UserID: true },
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Then, find the orders by UserID
+      const orders = await prisma.orders.findMany({
+        where: { UserID: user.UserID },
         include: {
           OrderProduct: {
             include: {
@@ -25,8 +35,10 @@ export default async function handler(req, res) {
 
       return res.status(200).json(orders);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching orders:', error);
       return res.status(500).json({ error: 'Error fetching orders' });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     return res.status(405).json({ error: 'Method not allowed' });
