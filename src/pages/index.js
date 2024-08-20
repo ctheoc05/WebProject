@@ -4,7 +4,6 @@ import "../app/globals.css";
 import { FaShoppingCart, FaHeart, FaBars } from 'react-icons/fa';
 import Footer from "./components/Footer";
 
-
 const Notification = ({ message, onClose }) => {
     return (
         <div className="fixed top-16 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50 transform translate-y-0 transition-transform duration-300 ease-in-out">
@@ -28,11 +27,10 @@ export default function Home() {
     const [notification, setNotification] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [sidebarVisible, setSidebarVisible] = useState(false);
-    
-     
-    
+
     useEffect(() => {
         document.title = 'Home';
+        
         async function fetchProducts() {
             try {
                 const response = await fetch('/api/products');
@@ -144,31 +142,44 @@ export default function Home() {
 
         if (wishlist.includes(product.ProductID)) {
             try {
-                await fetch('/api/wishlistREMOVE', {
+                const response = await fetch(`/api/wishlistREMOVE?email=${email}&productID=${product.ProductID}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, productID: product.ProductID }),
                 });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to remove item from wishlist');
+                }
+
                 setWishlist(prev => prev.filter(id => id !== product.ProductID));
                 setNotification(`Removed ${product.Name} from wishlist`);
             } catch (error) {
                 alert('Error removing item from wishlist.');
+                console.error('Error removing item from wishlist:', error);
             }
         } else {
             try {
-                await fetch('/api/wishlistADD', {
+                const response = await fetch('/api/wishlistADD', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ email, username, productId: product.ProductID, quantity: 1 }),
                 });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to add item to wishlist');
+                }
+
                 setWishlist(prev => [...prev, product.ProductID]);
                 setNotification(`Added ${product.Name} to wishlist`);
             } catch (error) {
                 alert('Error adding item to wishlist.');
+                console.error('Error adding item to wishlist:', error);
             }
         }
 
@@ -189,22 +200,23 @@ export default function Home() {
     const handleCloseDescription = () => {
         setSelectedProduct(null);
     };
+
     const toggleSidebar = () => {
         setSidebarVisible(!sidebarVisible);
     };
 
-      return (
+    return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
-    <Navbar />
-    <div className="relative mt-30 p-16 text-center">
-        <img src="/wow.png" alt="Welcome Image" className="w-full h-80 object-cover" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-            <h1 className="text-3xl font-bold mb-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded">Welcome to Our Website!</h1>
-            <p className="text-lg bg-black bg-opacity-80 text-white px-4 py-2 rounded">
-                Explore our collection and find the perfect product for you!
-            </p>
-        </div>
-    </div>
+            <Navbar />
+            <div className="relative mt-30 p-16 text-center">
+                <img src="/wow.png" alt="Welcome Image" className="w-full h-80 object-cover" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                    <h1 className="text-3xl font-bold mb-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded">Welcome to Our Website!</h1>
+                    <p className="text-lg bg-black bg-opacity-80 text-white px-4 py-2 rounded">
+                        Explore our collection and find the perfect product for you!
+                    </p>
+                </div>
+            </div>
 
             <div className="flex flex-1">
                 {/* Toggle Button for Small Screens */}
@@ -219,6 +231,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-blue-500 text-white"
+                                onClick={() => setCategory('All')}
                             >
                                 All
                             </button>
@@ -226,6 +239,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
+                                onClick={() => setCategory('Rings')}
                             >
                                 Rings
                             </button>
@@ -233,6 +247,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
+                                onClick={() => setCategory('Earrings')}
                             >
                                 Earrings
                             </button>
@@ -240,6 +255,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
+                                onClick={() => setCategory('Necklaces')}
                             >
                                 Necklaces
                             </button>
@@ -247,6 +263,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
+                                onClick={() => setCategory('Bracelets')}
                             >
                                 Bracelets
                             </button>
@@ -258,6 +275,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
+                                onClick={() => setPriceSort('LowToHigh')}
                             >
                                 Low to High
                             </button>
@@ -265,6 +283,7 @@ export default function Home() {
                         <li>
                             <button
                                 className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
+                                onClick={() => setPriceSort('HighToLow')}
                             >
                                 High to Low
                             </button>
@@ -273,13 +292,13 @@ export default function Home() {
 
                     <button
                         className="block w-full text-left p-2 mt-8 rounded bg-red-500 text-white hover:bg-red-600"
+                        onClick={handleClearFilters}
                     >
                         Clear Filters
                     </button>
                 </aside>
 
                 {/* Main Content */}
-                
                 <main className="flex-1 p-8">
                     <div className="flex justify-between items-center mb-4">
                         <input
@@ -302,7 +321,8 @@ export default function Home() {
                                 />
                                 <h3 className="mt-4 text-lg font-semibold">{product.Name}</h3>
                                 <p className="text-gray-600">
-                                    ${isNaN(parseFloat(product.RetailPrice)) ? 'N/A' : parseFloat(product.RetailPrice).toFixed(2)}</p>
+                                    ${isNaN(parseFloat(product.RetailPrice)) ? 'N/A' : parseFloat(product.RetailPrice).toFixed(2)}
+                                </p>
                                 <div className="flex justify-between items-center mt-4">
                                     <button
                                         onClick={() => handleAddToCart(product)}

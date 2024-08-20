@@ -80,9 +80,19 @@ export default function Account() {
       {return;
 
     }
+    try{
     const response = await fetch(`/api/orders?email=${userData.email}`);
     const data = await response.json();
-    setOrders(data);
+    if(Array.isArray(data)){
+      setOrders(data);
+    } else {
+      setOrders([]);
+    }
+  } catch(error){
+    console.error('failed to fetch orders:', error);
+    setOrders([]);
+  }
+    
   };
 
   const [addressFormData, setAddressFormData] = useState({
