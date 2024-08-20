@@ -209,12 +209,17 @@ export default function Home() {
         <div className="min-h-screen bg-gray-100 flex flex-col">
             <Navbar />
             <div className="relative mt-30 p-16 text-center">
-                <img src="/wow.png" alt="Welcome Image" className="w-full h-80 object-cover" />
+                <img src="/wow.png" alt="Welcome Image" className="w-full h-auto object-cover" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <h1 className="text-3xl font-bold mb-4 bg-black bg-opacity-80 text-white px-4 py-2 rounded">Welcome to Our Website!</h1>
-                    <p className="text-lg bg-black bg-opacity-80 text-white px-4 py-2 rounded">
+                    <h1 className="text-3xl mb-4 text-black px-4 py-2 rounded">Welcome to Our Website!</h1>
+                    <p className="text-lg text-black px-4 py-2 rounded">
                         Explore our collection and find the perfect product for you!
                     </p>
+                    {username && ( // Only display if a username is set
+                        <p className="text-lg mt-2 text-black px-4 py-2 rounded">
+                            Logged in as: <strong>{username}</strong>
+                        </p>
+                    )}
                 </div>
             </div>
 
@@ -260,14 +265,8 @@ export default function Home() {
                                 Necklaces
                             </button>
                         </li>
-                        <li>
-                            <button
-                                className="block w-full text-left p-2 rounded bg-white text-gray-800 hover:bg-blue-100"
-                                onClick={() => setCategory('Bracelets')}
-                            >
-                                Bracelets
-                            </button>
-                        </li>
+                    
+                      
                     </ul>
 
                     <h2 className="text-lg font-semibold mt-8 mb-4">Sort by Price</h2>
