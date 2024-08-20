@@ -15,6 +15,15 @@ export default async function handler(req, res) {
     const totalAmount = cart.reduce((total, product) => total + (product.RetailPrice * product.quantity), 0);
 
     try {
+      // Retrieve the user based on the provided email
+      const user = await prisma.Users.findUnique({
+        where: { Email: email },
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
       // Check stock before creating the order
       for (const product of cart) {
         const productInStock = await prisma.Products.findUnique({
@@ -22,16 +31,16 @@ export default async function handler(req, res) {
         });
 
         if (productInStock && productInStock.QtyInStock < product.quantity) {
-          return res.status(400).json({ error:` Not enough stock for product ID ${product.ProductID}` });
+          return res.status(400).json({ error: `Not enough stock for product ID ${product.ProductID}` });
         }
       }
 
-      // Create the order
+      // Create the order and associate it with the user
       const order = await prisma.Orders.create({
         data: {
           OrderDate: new Date(),
           totalAmount: totalAmount,
-          // Email might need to be handled separately or in another way
+          UserID: user.UserID, // Link the order to the logged-in user
         },
       });
 
@@ -54,7 +63,7 @@ export default async function handler(req, res) {
         OrderID: order.OrderID,
         ProductID: product.ProductID,
         Quantity: product.quantity,
-        ProductName: product.Name
+        ProductName: product.Name,
       }));
 
       await prisma.OrderProduct.createMany({
