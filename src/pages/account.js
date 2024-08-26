@@ -35,6 +35,7 @@ export default function Account() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [repeatOrderLoading,setRepeatOrderLoading]=useState(null);
 
   const router = useRouter();
 
@@ -68,6 +69,33 @@ export default function Account() {
       fetchOrders();
     }
   }, [isLoggedIn]);
+  const handleRepeatOrder = async (orderId) => {
+    setRepeatOrderLoading(orderId); // Show loading for the current order
+    try {
+      const response = await fetch('/api/repeatOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId }),
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        alert('Order repeated successfully!');
+        // Optionally, refresh orders or update UI here
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to repeat order:', errorData.message);
+        alert('Failed to repeat order.');
+      }
+    } catch (error) {
+      console.error('Failed to repeat order:', error);
+      alert('Failed to repeat order.');
+    } finally {
+      setRepeatOrderLoading(null); // Stop loading
+    }
+  };
 
   const fetchAddresses = async () => {
     const response = await fetch('/api/addresses');
@@ -367,6 +395,9 @@ if (newPassword !== confirmNewPassword) {
           <p><strong>Order ID:</strong> {order.OrderID}</p>
           <p><strong>Order Date:</strong> {formatDate(order.OrderDate)}</p>
           <p><strong>Total Amount:</strong> {order.totalAmount}</p>
+          <button onClick={()=> handleRepeatOrder(order.OrderID)}>
+           { repeatOrderLoading===order.OrderID ? 'Repeating...' : 'Repeat Order'}
+          </button>
           <div className="order-products">
             <h3>Products:</h3>
             <ul>
